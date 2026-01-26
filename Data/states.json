@@ -1,0 +1,69 @@
+[
+  {
+    "id": "CA",
+    "name": "California",
+    "abbreviation": "CA",
+    "riskLevel": "veryHigh",
+    "topHazards": ["Wildfires", "Earthquakes", "Drought", "Landslides"],
+    "seasonalRisks": [
+      { "season": "Fire", "months": ["June", "July", "August", "September", "October"], "hazards": ["Wildfires", "Heat"], "riskLevel": "veryHigh" },
+      { "season": "Winter", "months": ["November", "December", "January", "February"], "hazards": ["Mudslides", "Floods"], "riskLevel": "high" },
+      { "season": "Earthquake", "months": ["All Year"], "hazards": ["Earthquakes"], "riskLevel": "veryHigh" }
+    ]
+  },
+  {
+    "id": "TX",
+    "name": "Texas",
+    "abbreviation": "TX",
+    "riskLevel": "high",
+    "topHazards": ["Hurricanes", "Tornadoes", "Flooding", "Heat"],
+    "seasonalRisks": [
+      { "season": "Hurricane", "months": ["June", "July", "August", "September", "October"], "hazards": ["Hurricanes", "Tropical Storms"], "riskLevel": "high" },
+      { "season": "Tornado", "months": ["March", "April", "May"], "hazards": ["Tornadoes", "Severe Storms"], "riskLevel": "high" },
+      { "season": "Summer", "months": ["June", "July", "August"], "hazards": ["Extreme Heat", "Drought"], "riskLevel": "high" }
+    ]
+  },
+  {
+    "id": "FL",
+    "name": "Florida",
+    "abbreviation": "FL",
+    "riskLevel": "veryHigh",
+    "topHazards": ["Hurricanes", "Flooding", "Tornadoes", "Sinkholes"],
+    "seasonalRisks": [
+      { "season": "Hurricane", "months": ["June", "July", "August", "September", "October", "November"], "hazards": ["Hurricanes", "Storm Surge"], "riskLevel": "veryHigh" },
+      { "season": "Summer", "months": ["May", "June", "July", "August"], "hazards": ["Thunderstorms", "Lightning", "Flooding"], "riskLevel": "high" }
+    ]
+  },
+  {
+    "id": "LA",
+    "name": "Louisiana",
+    "abbreviation": "LA",
+    "riskLevel": "veryHigh",
+    "topHazards": ["Hurricanes", "Flooding", "Tornadoes"],
+    "seasonalRisks": [
+      { "season": "Hurricane", "months": ["June", "July", "August", "September", "October"], "hazards": ["Hurricanes", "Storm Surge"], "riskLevel": "veryHigh" }
+    ]
+  },
+  {
+    "id": "OK",
+    "name": "Oklahoma",
+    "abbreviation": "OK",
+    "riskLevel": "high",
+    "topHazards": ["Tornadoes", "Severe Storms", "Ice Storms", "Wildfires"],
+    "seasonalRisks": [
+      { "season": "Tornado", "months": ["April", "May", "June"], "hazards": ["Tornadoes", "Hail"], "riskLevel": "veryHigh" },
+      { "season": "Winter", "months": ["December", "January", "February"], "hazards": ["Ice Storms", "Blizzards"], "riskLevel": "moderate" }
+    ]
+  },
+  {
+    "id": "CO",
+    "name": "Colorado",
+    "abbreviation": "CO",
+    "riskLevel": "moderate",
+    "topHazards": ["Wildfires", "Flooding", "Blizzards", "Avalanches"],
+    "seasonalRisks": [
+      { "season": "Fire", "months": ["June", "July", "August"], "hazards": ["Wildfires"], "riskLevel": "high" },
+      { "season": "Winter", "months": ["November", "December", "January", "February", "March"], "hazards": ["Blizzards", "Avalanches"], "riskLevel": "high" }
+    ]
+  }
+]

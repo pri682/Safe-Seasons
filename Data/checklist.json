@@ -1,0 +1,19 @@
+[
+  { "id": "water", "name": "Water (1 gallon per person per day, 3+ days)", "category": "basicSupplies", "priority": "critical" },
+  { "id": "food", "name": "Non-perishable food (3+ days)", "category": "basicSupplies", "priority": "critical" },
+  { "id": "flashlight", "name": "Flashlight with extra batteries", "category": "basicSupplies", "priority": "critical" },
+  { "id": "firstaid", "name": "First aid kit", "category": "medical", "priority": "critical" },
+  { "id": "meds", "name": "Prescription medications (7-day supply)", "category": "medical", "priority": "critical" },
+  { "id": "radio", "name": "Battery-powered or hand-crank radio", "category": "communication", "priority": "high" },
+  { "id": "documents", "name": "Important documents (IDs, insurance) in waterproof container", "category": "documents", "priority": "high" },
+  { "id": "cash", "name": "Cash in small denominations", "category": "basicSupplies", "priority": "high" },
+  { "id": "whistle", "name": "Whistle to signal for help", "category": "basicSupplies", "priority": "high" },
+  { "id": "dust-masks", "name": "Dust masks (N95)", "category": "medical", "priority": "high" },
+  { "id": "moist-towelettes", "name": "Moist towelettes, garbage bags, plastic ties", "category": "basicSupplies", "priority": "medium" },
+  { "id": "wrench", "name": "Wrench or pliers to turn off utilities", "category": "basicSupplies", "priority": "medium" },
+  { "id": "can-opener", "name": "Manual can opener", "category": "basicSupplies", "priority": "medium" },
+  { "id": "phone-charger", "name": "Cell phone with chargers (portable backup)", "category": "communication", "priority": "medium" },
+  { "id": "contact-list", "name": "Family emergency contact list", "category": "communication", "priority": "medium" },
+  { "id": "pet-supplies", "name": "Pet food and supplies (if applicable)", "category": "basicSupplies", "priority": "low" },
+  { "id": "blankets", "name": "Blankets or sleeping bags", "category": "basicSupplies", "priority": "low" }
+]

@@ -1,0 +1,32 @@
+{
+  "verificationSteps": [
+    { "id": "v1", "title": "Check WEA is enabled", "instructions": "Open Settings → Notifications. Scroll to Government Alerts. Ensure 'Emergency Alerts' and 'Public Safety Alerts' are ON. 'AMBER Alerts' is optional." },
+    { "id": "v2", "title": "Confirm carrier support", "instructions": "WEA is supported by all major US carriers (AT&T, Verizon, T-Mobile, etc.). Your phone must be connected to a participating carrier's network. Roaming or WiFi-only may not receive WEAs." },
+    { "id": "v3", "title": "Test with a drill (optional)", "instructions": "Some states conduct WEA tests. You may receive a test alert. Check your phone's alert history in Settings → Notifications → Government Alerts to see past WEAs." }
+  ],
+  "education": {
+    "whatIsWEA": {
+      "title": "What is WEA?",
+      "content": "Wireless Emergency Alerts (WEA) are free messages sent by government authorities (FEMA, NWS, state/local) to compatible cell phones. You don't need to sign up—if your phone is on and can receive, you get them. WEAs are used for imminent threats (tornado, hurricane, flash flood), AMBER Alerts, and Presidential alerts."
+    },
+    "typesOfAlerts": {
+      "title": "Types of Alerts",
+      "content": "**Imminent Threat:** Severe weather, natural disasters, active shooter, biological/chemical hazards. **AMBER Alerts:** Missing children. **Presidential:** National emergencies. All use a distinct sound and vibration, even if your phone is on silent."
+    },
+    "whatToDo": {
+      "title": "When You Receive a WEA",
+      "content": "1. Read the message carefully. 2. Follow any instructions (e.g., evacuate, seek shelter). 3. Don't rely solely on WEA—use NOAA Weather Radio, local news, and official apps. 4. Share the alert with others who may not have received it."
+    },
+    "limitations": {
+      "title": "Limitations",
+      "content": "WEAs are short (360 characters). They may be delayed in congested networks. Location accuracy is cell-tower based (about 0.1–1 mile). Keep a battery-powered radio and backup communication plan."
+    }
+  },
+  "seasonalReminders": [
+    { "season": "Hurricane (Jun–Nov)", "tip": "Review evacuation routes, stock 3+ days of supplies, and know your zone (A, B, C, etc.)." },
+    { "season": "Wildfire (Summer–Fall)", "tip": "Create defensible space, pack a go-bag, and monitor air quality." },
+    { "season": "Tornado (Spring)", "tip": "Identify your safe room, practice drills, and keep a NOAA Weather Radio." },
+    { "season": "Winter (Nov–Mar)", "tip": "Winterize your home, keep car kit with blankets and shovel, and avoid travel in storms." },
+    { "season": "Earthquake (Year-round)", "tip": "Secure heavy furniture, practice Drop-Cover-Hold-On, and know gas shut-off." }
+  ]
+}

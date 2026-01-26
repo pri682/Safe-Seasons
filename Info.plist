@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Priyanka.SafeSeasons</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>safeseasons</string>
+			</array>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+		</dict>
+	</array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>SafeSeasons needs your location to show coordinates and compass heading for emergency situations.</string>
+	<key>NSCameraUsageDescription</key>
+	<string>SafeSeasons needs camera access to use the flashlight for the SOS beacon feature.</string>
+</dict>
+</plist>

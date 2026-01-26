@@ -1,0 +1,46 @@
+{
+  "categories": [
+    {
+      "id": "weather",
+      "name": "Weather",
+      "icon": "cloud.bolt.rain.fill",
+      "color": "blue",
+      "disasters": [
+        { "id": "hurricane", "name": "Hurricanes", "icon": "hurricane", "severity": "extreme", "description": "Tropical cyclones with sustained winds over 74 mph. Cause storm surge, flooding, and wind damage.", "preparednessSteps": ["Know evacuation routes", "Stock 3+ days of supplies", "Secure outdoor items", "Have a communication plan"], "supplies": ["Water (1 gal/person/day)", "Non-perishable food", "Flashlights", "Batteries", "First aid kit"] },
+        { "id": "tornado", "name": "Tornadoes", "icon": "tornado", "severity": "extreme", "description": "Violently rotating columns of air. Can form quickly with little warning.", "preparednessSteps": ["Identify safe room (basement or interior)", "Practice tornado drills", "Stay informed via NOAA Weather Radio", "Know the difference between watch and warning"], "supplies": ["Helmet", "Sturdy shoes", "Whistle", "Battery-powered radio", "Emergency kit"] },
+        { "id": "flood", "name": "Flooding", "icon": "drop.triangle.fill", "severity": "high", "description": "Overflow of water onto normally dry land. Includes flash floods, river floods, and storm surge.", "preparednessSteps": ["Know your flood zone", "Elevate critical utilities", "Never drive through flooded roads", "Create a flood emergency plan"], "supplies": ["Sandbags", "Sump pump", "Waterproof containers", "Water", "Non-perishable food"] },
+        { "id": "thunderstorm", "name": "Severe Thunderstorms", "icon": "cloud.bolt.fill", "severity": "moderate", "description": "Storms with hail, damaging winds, lightning, and possible tornadoes.", "preparednessSteps": ["Stay indoors", "Unplug electronics", "Avoid plumbing and corded phones", "Monitor weather alerts"], "supplies": ["Flashlight", "Batteries", "Battery radio", "First aid kit"] }
+      ]
+    },
+    {
+      "id": "fire-heat",
+      "name": "Fire & Heat",
+      "icon": "flame.fill",
+      "color": "orange",
+      "disasters": [
+        { "id": "wildfire", "name": "Wildfires", "icon": "flame.fill", "severity": "extreme", "description": "Uncontrolled fires in wildland areas. Spread quickly with wind and dry conditions.", "preparednessSteps": ["Create defensible space (30 ft)", "Clear gutters and roofs", "Have evacuation go-bag ready", "Know multiple evacuation routes"], "supplies": ["N95 masks", "Goggles", "Emergency kit", "Important documents", "Pet supplies"] },
+        { "id": "heat", "name": "Extreme Heat", "icon": "thermometer.sun.fill", "severity": "high", "description": "Prolonged periods of dangerously high temperatures. Risk of heat stroke and dehydration.", "preparednessSteps": ["Stay hydrated", "Limit outdoor activity", "Check on vulnerable neighbors", "Know cooling center locations"], "supplies": ["Water", "Electrolytes", "Sunscreen", "Light clothing", "Cooling towels"] }
+      ]
+    },
+    {
+      "id": "winter",
+      "name": "Winter",
+      "icon": "snowflake",
+      "color": "cyan",
+      "disasters": [
+        { "id": "blizzard", "name": "Blizzards", "icon": "cloud.snow.fill", "severity": "extreme", "description": "Severe snowstorms with strong winds, poor visibility, and life-threatening conditions.", "preparednessSteps": ["Stay indoors", "Stock emergency supplies", "Keep vehicle fuel tank full", "Have backup heat source"], "supplies": ["Rock salt", "Shovel", "Blankets", "Water", "Non-perishable food", "Battery radio"] },
+        { "id": "ice-storm", "name": "Ice Storms", "icon": "cloud.sleet.fill", "severity": "high", "description": "Freezing rain that coats surfaces in ice. Causes power outages and dangerous travel.", "preparednessSteps": ["Prepare for power loss", "Avoid travel", "Have alternative heat (safely)", "Stock water and food"], "supplies": ["Flashlights", "Batteries", "Blankets", "Manual can opener", "First aid kit"] }
+      ]
+    },
+    {
+      "id": "geological",
+      "name": "Geological",
+      "icon": "mountain.2.fill",
+      "color": "brown",
+      "disasters": [
+        { "id": "earthquake", "name": "Earthquakes", "icon": "waveform.path.ecg", "severity": "extreme", "description": "Sudden shaking of the ground. No advance warning. Can trigger tsunamis and landslides.", "preparednessSteps": ["Drop, Cover, Hold On", "Secure heavy furniture", "Know gas shut-off location", "Practice earthquake drills"], "supplies": ["Emergency kit", "Wrench for utilities", "Sturdy shoes", "Whistle", "Dust masks"] },
+        { "id": "landslide", "name": "Landslides", "icon": "mountain.2.fill", "severity": "high", "description": "Downward movement of soil and rock. Often triggered by heavy rain or earthquakes.", "preparednessSteps": ["Know landslide-prone areas", "Watch for warning signs", "Evacuate if advised", "Avoid steep slopes during storms"], "supplies": ["Emergency kit", "Battery radio", "Evacuation route map"] }
+      ]
+    }
+  ]
+}

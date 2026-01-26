@@ -1,0 +1,14 @@
+[
+  { "id": "r1", "name": "UCLA Ronald Reagan Medical Center", "type": "hospital", "latitude": 34.0669, "longitude": -118.4452, "address": "757 Westwood Plaza, Los Angeles, CA" },
+  { "id": "r2", "name": "LA Fire Station 27", "type": "fireStation", "latitude": 34.0522, "longitude": -118.2437, "address": "1424 N Cahuenga Blvd, Los Angeles, CA" },
+  { "id": "r3", "name": "LAPD Central Division", "type": "policeStation", "latitude": 34.0407, "longitude": -118.2468, "address": "251 E 6th St, Los Angeles, CA" },
+  { "id": "r4", "name": "American Red Cross LA Chapter", "type": "shelter", "latitude": 34.0625, "longitude": -118.3061, "address": "11355 Ohio Ave, Los Angeles, CA" },
+  { "id": "r5", "name": "Memorial Hermann-TMC", "type": "hospital", "latitude": 29.7074, "longitude": -95.4019, "address": "6411 Fannin St, Houston, TX" },
+  { "id": "r6", "name": "Houston Fire Station 8", "type": "fireStation", "latitude": 29.7604, "longitude": -95.3698, "address": "2217 Milam St, Houston, TX" },
+  { "id": "r7", "name": "HPD Central Patrol", "type": "policeStation", "latitude": 29.7525, "longitude": -95.3667, "address": "61 Riesner St, Houston, TX" },
+  { "id": "r8", "name": "George R. Brown Convention Center (Shelter)", "type": "shelter", "latitude": 29.7513, "longitude": -95.3608, "address": "1001 Avenida de las Americas, Houston, TX" },
+  { "id": "r9", "name": "Jackson Memorial Hospital", "type": "hospital", "latitude": 25.7907, "longitude": -80.2100, "address": "1611 NW 12th Ave, Miami, FL" },
+  { "id": "r10", "name": "Miami Fire Rescue Station 1", "type": "fireStation", "latitude": 25.7743, "longitude": -80.1937, "address": "144 NE 5th St, Miami, FL" },
+  { "id": "r11", "name": "Miami Police Department", "type": "policeStation", "latitude": 25.7743, "longitude": -80.1967, "address": "400 NW 2nd Ave, Miami, FL" },
+  { "id": "r12", "name": "FIU Arena (Evacuation Shelter)", "type": "shelter", "latitude": 25.7570, "longitude": -80.3733, "address": "11200 SW 8th St, Miami, FL" }
+]
