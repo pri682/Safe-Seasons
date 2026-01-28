@@ -38,20 +38,6 @@ A comprehensive disaster preparedness iOS app that adapts to different seasonal 
 
 ## Technical Architecture
 
-### SOLID Principles
-The app strictly follows SOLID principles:
-- **Single Responsibility Principle (SRP)**: Each class has one reason to change
-- **Open/Closed Principle (OCP)**: Open for extension, closed for modification
-- **Liskov Substitution Principle (LSP)**: Subtypes are substitutable for their base types
-- **Interface Segregation Principle (ISP)**: Clients depend only on interfaces they use
-- **Dependency Inversion Principle (DIP)**: Depend on abstractions, not concretions
-
-### Architecture Pattern
-- **MVVM (Model-View-ViewModel)**: Clean separation of concerns
-- **Dependency Injection**: All dependencies injected via `DependencyContainer`
-- **Repository Pattern**: Data access abstraction
-- **Use Case Pattern**: Business logic encapsulation
-
 ### Offline-First Design
 - All data is embedded and works completely offline
 - No network calls required for core functionality
@@ -125,11 +111,3 @@ SafeSeasons.swiftpm/
 - **Apple Foundation Models**: On-device AI capabilities (iOS 26+)
 - **Apple Intelligence**: Privacy-first AI processing
 - **FEMA & NWS**: Disaster preparedness information and safety guidance
-
-## License
-
-[Add your license here]
-
-## Contributing
-
-[Add contribution guidelines here]
