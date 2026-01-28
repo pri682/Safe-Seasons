@@ -50,6 +50,7 @@ playground.xcworkspace
 
 # Exclude markdown files in docs folder (except README)
 docs/*.md
+
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However
@@ -84,38 +85,8 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 
-# Code Injection
-#
-# After new code Injection tools there's a generated folder /iOSInjectionProject
-# https://github.com/johnno1962/injectionforxcode
 
-iOSInjectionProject/
 
-# macOS
-.DS_Store
 
-# Temporary files
-*.swp
-*~.nib
-*.tmp
-*.temp
 
-# Cursor/IDE
-.cursor/
-.idea/
-
-# Build artifacts
-*.o
-*.a
-*.framework
-
-# Swift Package Manager build artifacts
-.build/
-.swiftpm/
-
-# Xcode user data
-*.xcuserstate
-*.xcuserdatad/
-
-# Package.resolved (can be regenerated)
 Package.resolved
