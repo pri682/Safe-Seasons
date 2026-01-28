@@ -48,6 +48,8 @@ playground.xcworkspace
 
 .build/
 
+# Exclude markdown files in docs folder (except README)
+docs/*.md
 # CocoaPods
 #
 # We recommend against adding the Pods directory to your .gitignore. However
