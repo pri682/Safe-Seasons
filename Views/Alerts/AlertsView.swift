@@ -232,22 +232,6 @@ struct WeatherAlertCard: View {
                 .foregroundStyle(.primary)
                 .lineLimit(nil)
             
-            // Attribution badge (similar to Apple Intelligence style)
-            HStack(spacing: 4) {
-                Image(systemName: "shield.checkered")
-                    .font(.caption2)
-                Text("Based on")
-                    .font(.caption2)
-                Link("FEMA", destination: URL(string: "https://ready.gov")!)
-                    .font(.caption2)
-                Text("&")
-                    .font(.caption2)
-                Link("NWS", destination: URL(string: "https://weather.gov/safety")!)
-                    .font(.caption2)
-            }
-            .foregroundStyle(AppColors.darkNavy.opacity(0.5))
-            .padding(.leading, 4)
-            .padding(.top, 6)
         }
         .padding()
         .frame(maxWidth: .infinity, alignment: .leading)

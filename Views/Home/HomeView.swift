@@ -52,7 +52,7 @@ struct HomeView: View {
                     }
                     
                     // Row 3: Contextual Tips (full width if present)
-                    if let state = viewModel.selectedState, !viewModel.contextualTips.isEmpty {
+                    if viewModel.selectedState != nil, !viewModel.contextualTips.isEmpty {
                         contextualTipsCard
                     }
                     
@@ -1016,33 +1016,16 @@ struct ChatBubble: View {
                             )
                     )
                 if !message.isUser {
-                    VStack(alignment: .leading, spacing: 4) {
-                        if message.usedAppleIntelligence {
-                            HStack(spacing: 4) {
-                                Image(systemName: "apple.logo")
-                                    .font(.caption2)
-                                Text("Apple Intelligence")
-                                    .font(.caption2)
-                            }
-                            .foregroundStyle(AppColors.darkNavy.opacity(0.5))
-                        }
-                        
-                        // Attribution for preparedness guidance
+                    if message.usedAppleIntelligence {
                         HStack(spacing: 4) {
-                            Image(systemName: "shield.checkered")
+                            Image(systemName: "apple.logo")
                                 .font(.caption2)
-                            Text("Based on")
-                                .font(.caption2)
-                            Link("FEMA", destination: URL(string: "https://ready.gov")!)
-                                .font(.caption2)
-                            Text("&")
-                                .font(.caption2)
-                            Link("NWS", destination: URL(string: "https://weather.gov/safety")!)
+                            Text("Apple Intelligence")
                                 .font(.caption2)
                         }
                         .foregroundStyle(AppColors.darkNavy.opacity(0.5))
+                        .padding(.leading, 4)
                     }
-                    .padding(.leading, 4)
                 }
             }
             if !message.isUser {
@@ -1349,22 +1332,6 @@ struct AskSafeSeasonsSheet: View {
                                     .foregroundStyle(AppColors.darkNavy.opacity(0.5))
                                     .padding(.top, 6)
                                 }
-                                
-                                // Attribution for preparedness guidance
-                                HStack(spacing: 4) {
-                                    Image(systemName: "shield.checkered")
-                                        .font(.caption2)
-                                    Text("Based on")
-                                        .font(.caption2)
-                                    Link("FEMA", destination: URL(string: "https://ready.gov")!)
-                                        .font(.caption2)
-                                    Text("&")
-                                        .font(.caption2)
-                                    Link("NWS", destination: URL(string: "https://weather.gov/safety")!)
-                                        .font(.caption2)
-                                }
-                                .foregroundStyle(AppColors.darkNavy.opacity(0.5))
-                                .padding(.top, 4)
                             }
                             .padding(20)
                             .frame(maxWidth: .infinity, alignment: .leading)
