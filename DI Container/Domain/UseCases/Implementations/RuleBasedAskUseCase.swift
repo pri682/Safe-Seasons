@@ -7,7 +7,7 @@
 
 import Foundation
 
-final class RuleBasedAskUseCase: AskSafeSeasonsUseCaseProtocol {
+final class RuleBasedAskUseCase: AskSafeSeasonsUseCaseProtocol, @unchecked Sendable {
     private let disasterUseCase: DisasterUseCaseProtocol
     private let offlineAIUseCase: OfflineAIUseCaseProtocol
     private let currentMonthProvider: () -> String

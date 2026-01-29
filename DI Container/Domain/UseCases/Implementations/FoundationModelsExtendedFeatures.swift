@@ -232,8 +232,8 @@ final class FoundationModelsExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProto
         
         let options = GenerationOptions(
             sampling: .greedy,
-            temperature: 0.6,
-            maximumResponseTokens: 512
+            temperature: 0.4,
+            maximumResponseTokens: 400
         )
         let response = try await session.respond(to: question, options: options)
         return response.content
@@ -246,7 +246,8 @@ final class FoundationModelsExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProto
             Task {
                 do {
                     guard isAppleIntelligenceAvailable() else {
-                        throw FoundationModelsError.appleIntelligenceUnavailable
+                        continuation.finish(throwing: FoundationModelsError.appleIntelligenceUnavailable)
+                        return
                     }
                     
                     let instructions = buildInstructions(context: context)
@@ -258,17 +259,28 @@ final class FoundationModelsExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProto
                     )
                     
                     let stream = try await session.streamResponse(
-                        options: GenerationOptions(temperature: 0.6, maximumResponseTokens: 512)
+                        options: GenerationOptions(temperature: 0.4, maximumResponseTokens: 400)
                     ) {
                         question
                     }
                     
-                    var fullText = ""
+                    // Handle cumulative streaming: Foundation Models returns full response so far, not incremental chunks
+                    var previousContent = ""
+                    
                     for try await partial in stream {
-                        let newChunk = partial.content
-                        if !newChunk.isEmpty {
-                            fullText += newChunk
-                            continuation.yield(newChunk)
+                        let currentContent = partial.content
+                        
+                        // If current content starts with previous, it's cumulative - extract new part only
+                        if currentContent.hasPrefix(previousContent) && currentContent.count > previousContent.count {
+                            let newChunk = String(currentContent.dropFirst(previousContent.count))
+                            if !newChunk.isEmpty {
+                                continuation.yield(newChunk)
+                                previousContent = currentContent
+                            }
+                        } else if !currentContent.isEmpty && currentContent != previousContent {
+                            // Fallback: if not cumulative pattern, treat as incremental
+                            continuation.yield(currentContent)
+                            previousContent = currentContent
                         }
                     }
                     continuation.finish()
@@ -507,13 +519,41 @@ final class FoundationModelsExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProto
     // MARK: - Private Helpers
     
     private func buildInstructions(context: AskContext) -> String {
-        var s = "You are SafeSeasons, a disaster preparedness assistant. Answer briefly and focus on safety. Use the getContextualTips tool when the user asks about their location, state, or \"this month\" risks."
+        var s = "You are SafeSeasons, a helpful disaster preparedness assistant. Provide clear, accurate, and actionable advice about disaster preparedness and safety.\n\n"
+        
+        // Context information
         if let state = context.state {
-            s += " User's state: \(state.name) (\(state.abbreviation)). Current month: \(context.month). Top hazards: \(state.topHazards.joined(separator: ", "))."
+            s += "User's location: \(state.name) (\(state.abbreviation)). Current month: \(context.month). Common hazards in this state: \(state.topHazards.joined(separator: ", ")).\n\n"
         } else {
-            s += " User has not selected a state. Current month: \(context.month)."
+            s += "User has not selected a specific state. Current month: \(context.month).\n\n"
         }
-        s += " Do not make up specific procedures—prefer tool data and general preparedness advice. For life-threatening emergencies, always say to call 911."
+        
+        // Critical response rules
+        s += "CRITICAL RULES - You MUST follow these:\n"
+        s += "1. NEVER include the word \"null\" in your response\n"
+        s += "2. NEVER repeat the same sentence or phrase multiple times\n"
+        s += "3. NEVER make up specific information that you don't know\n"
+        s += "4. Answer each question ONCE with complete, non-repetitive information\n"
+        s += "5. If you don't know something specific, provide general but accurate advice\n\n"
+        
+        // Tool usage guidance
+        s += "When to use the getContextualTips tool:\n"
+        s += "- ONLY when the user explicitly asks about their specific state or location\n"
+        s += "- ONLY when they ask about \"this month\" or current seasonal risks\n"
+        s += "- NEVER use the tool for general disaster questions (wildfires, hurricanes, tornadoes, floods, etc.)\n"
+        s += "- For general disaster questions, answer directly using your knowledge\n\n"
+        
+        // Response guidelines
+        s += "Response guidelines:\n"
+        s += "- Answer the user's question directly and completely\n"
+        s += "- Provide specific, actionable advice relevant to the disaster type mentioned\n"
+        s += "- If asked about a specific disaster, focus entirely on that disaster\n"
+        s += "- Keep responses concise (2-4 sentences per point)\n"
+        s += "- For life-threatening emergencies, always emphasize calling 911 immediately\n"
+        s += "- Each piece of information should appear only once in your response\n"
+        s += "- Do not repeat yourself or restate the same information\n"
+        s += "- Write naturally and conversationally, as if speaking to a friend"
+        
         return s
     }
 }
@@ -523,11 +563,14 @@ final class FoundationModelsExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProto
 @available(iOS 26.0, *)
 private final class GetContextualTipsTool: Tool, @unchecked Sendable {
     let name = "getContextualTips"
-    let description = "Gets contextual preparedness tips for a specific state and month."
+    let description = "ONLY use this tool when the user explicitly asks about their specific state or location, or asks about \"this month\" risks. NEVER use this tool for general disaster questions like 'what should I know about wildfires' or 'how do I prepare for hurricanes'. For general disaster questions, answer directly without using any tools."
     
     @Generable
     struct Arguments {
+        @Guide(description: "The two-letter state abbreviation (e.g., 'AZ' for Arizona, 'TX' for Texas)")
         let stateAbbr: String
+        
+        @Guide(description: "The full month name (e.g., 'January', 'February')")
         let month: String
     }
     
@@ -537,13 +580,18 @@ private final class GetContextualTipsTool: Tool, @unchecked Sendable {
         self.offlineAIUseCase = offlineAIUseCase
     }
     
-    func call(arguments: Arguments) async throws -> [String] {
+    func call(arguments: Arguments) async throws -> String {
         let state = EmbeddedData.states.first { $0.abbreviation == arguments.stateAbbr }
         let tips = offlineAIUseCase.getContextualTips(state: state, month: arguments.month)
-        let text = tips.isEmpty
-            ? "No specific tips for this state and month. Suggest general preparedness: water, food, first aid, documents, evacuation plan."
-            : tips.joined(separator: "\n")
-        return [text]
+        
+        if tips.isEmpty {
+            // Return helpful general tips without mentioning "no tips"
+            let generalTips = "General preparedness tips: Maintain an emergency kit with water (1 gallon per person per day), non-perishable food, first aid supplies, important documents, flashlight, batteries, and a communication plan. Know your evacuation routes and have a family emergency plan."
+            return generalTips
+        } else {
+            let tipsText = tips.joined(separator: "\n")
+            return tipsText
+        }
     }
 }
 
