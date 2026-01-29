@@ -15,8 +15,24 @@ struct Disaster: Identifiable, Equatable {
     let description: String
     let preparednessSteps: [String]
     let supplies: [String]
+    let additionalInfo: String
+    let warningSigns: [String]
+    let duringEvent: [String]
+    let sources: [DisasterSource]
     
-    init(id: UUID = UUID(), name: String, icon: String, severity: DisasterSeverity, description: String, preparednessSteps: [String], supplies: [String]) {
+    init(
+        id: UUID = UUID(),
+        name: String,
+        icon: String,
+        severity: DisasterSeverity,
+        description: String,
+        preparednessSteps: [String],
+        supplies: [String],
+        additionalInfo: String = "",
+        warningSigns: [String] = [],
+        duringEvent: [String] = [],
+        sources: [DisasterSource] = []
+    ) {
         self.id = id
         self.name = name
         self.icon = icon
@@ -24,6 +40,22 @@ struct Disaster: Identifiable, Equatable {
         self.description = description
         self.preparednessSteps = preparednessSteps
         self.supplies = supplies
+        self.additionalInfo = additionalInfo
+        self.warningSigns = warningSigns
+        self.duringEvent = duringEvent
+        self.sources = sources
+    }
+}
+
+struct DisasterSource: Identifiable, Equatable {
+    let id: UUID
+    let name: String
+    let url: String
+    
+    init(id: UUID = UUID(), name: String, url: String) {
+        self.id = id
+        self.name = name
+        self.url = url
     }
 }
 

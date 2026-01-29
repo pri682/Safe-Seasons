@@ -150,8 +150,30 @@ enum EmbeddedData {
 
     // MARK: - Disaster Categories
 
-    private static func _disaster(_ name: String, _ icon: String, _ sev: DisasterSeverity, _ desc: String, _ steps: [String], _ supplies: [String]) -> Disaster {
-        Disaster(name: name, icon: icon, severity: sev, description: desc, preparednessSteps: steps, supplies: supplies)
+    private static func _disaster(
+        _ name: String,
+        _ icon: String,
+        _ sev: DisasterSeverity,
+        _ desc: String,
+        _ steps: [String],
+        _ supplies: [String],
+        additionalInfo: String = "",
+        warningSigns: [String] = [],
+        duringEvent: [String] = [],
+        sources: [DisasterSource] = []
+    ) -> Disaster {
+        Disaster(
+            name: name,
+            icon: icon,
+            severity: sev,
+            description: desc,
+            preparednessSteps: steps,
+            supplies: supplies,
+            additionalInfo: additionalInfo,
+            warningSigns: warningSigns,
+            duringEvent: duringEvent,
+            sources: sources
+        )
     }
 
     static let disasterCategories: [DisasterCategory] = [
@@ -160,10 +182,70 @@ enum EmbeddedData {
             icon: "cloud.bolt.rain.fill",
             color: "blue",
             disasters: [
-                _disaster("Hurricanes", "hurricane", .extreme, "Tropical cyclones with sustained winds over 74 mph. Cause storm surge, flooding, and wind damage.", ["Know evacuation routes", "Stock 3+ days of supplies", "Secure outdoor items", "Have a communication plan"], ["Water (1 gal/person/day)", "Non-perishable food", "Flashlights", "Batteries", "First aid kit"]),
-                _disaster("Tornadoes", "tornado", .extreme, "Violently rotating columns of air. Can form quickly with little warning.", ["Identify safe room (basement or interior)", "Practice tornado drills", "Stay informed via NOAA Weather Radio", "Know the difference between watch and warning"], ["Helmet", "Sturdy shoes", "Whistle", "Battery-powered radio", "Emergency kit"]),
-                _disaster("Flooding", "drop.triangle.fill", .high, "Overflow of water onto normally dry land. Includes flash floods, river floods, and storm surge.", ["Know your flood zone", "Elevate critical utilities", "Never drive through flooded roads", "Create a flood emergency plan"], ["Sandbags", "Sump pump", "Waterproof containers", "Water", "Non-perishable food"]),
-                _disaster("Severe Thunderstorms", "cloud.bolt.fill", .moderate, "Storms with hail, damaging winds, lightning, and possible tornadoes.", ["Stay indoors", "Unplug electronics", "Avoid plumbing and corded phones", "Monitor weather alerts"], ["Flashlight", "Batteries", "Battery radio", "First aid kit"])
+                _disaster(
+                    "Hurricanes",
+                    "hurricane",
+                    .extreme,
+                    "Tropical cyclones with sustained winds over 74 mph. Cause storm surge, flooding, and wind damage.",
+                    ["Know evacuation routes", "Stock 3+ days of supplies", "Secure outdoor items", "Have a communication plan"],
+                    ["Water (1 gal/person/day)", "Non-perishable food", "Flashlights", "Batteries", "First aid kit"],
+                    additionalInfo: "Hurricanes are large, rotating storms that form over warm ocean waters. They are classified by wind speed into five categories:\n\nCategory 1: Winds 74-95 mph\nCategory 2: Winds 96-110 mph\nCategory 3: Winds 111-129 mph\nCategory 4: Winds 130-156 mph\nCategory 5: Winds 157 mph or higher\n\nThe most dangerous part of a hurricane is storm surge. This is water that gets pushed ashore by the winds and can reach over 20 feet high. Hurricanes can also create tornadoes and cause serious flooding from all the rain they bring.",
+                    warningSigns: ["Tropical storm/hurricane watch issued", "Rising water levels", "Increasing wind speeds", "Barometric pressure dropping", "Heavy rain bands approaching"],
+                    duringEvent: ["Stay indoors away from windows", "If in evacuation zone, leave immediately", "Do not drive through flooded areas", "Turn off utilities if instructed", "Stay tuned to NOAA Weather Radio"],
+                    sources: [
+                        DisasterSource(name: "FEMA - Hurricane Preparedness", url: "https://www.ready.gov/hurricanes"),
+                        DisasterSource(name: "NOAA - National Hurricane Center", url: "https://www.nhc.noaa.gov/prepare/"),
+                        DisasterSource(name: "American Red Cross - Hurricane Safety", url: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/hurricane")
+                    ]
+                ),
+                _disaster(
+                    "Tornadoes",
+                    "tornado",
+                    .extreme,
+                    "Violently rotating columns of air. Can form quickly with little warning.",
+                    ["Identify safe room (basement or interior)", "Practice tornado drills", "Stay informed via NOAA Weather Radio", "Know the difference between watch and warning"],
+                    ["Helmet", "Sturdy shoes", "Whistle", "Battery-powered radio", "Emergency kit"],
+                    additionalInfo: "Tornadoes are violently rotating columns of air that drop down from thunderstorms to the ground. They can reach wind speeds over 300 mph and cause terrible damage. Scientists use the Enhanced Fujita Scale to rate tornadoes from EF0 to EF5 based on how much damage they cause.\n\nMost tornadoes happen in the central United States, an area called Tornado Alley. But tornadoes can happen anywhere. They usually only last a few minutes, but they can travel for miles. The warning time is often very short, sometimes just seconds.",
+                    warningSigns: ["Dark, greenish sky", "Large, dark, low-lying cloud", "Roaring noise like a freight train", "Debris cloud", "Funnel cloud visible", "Hail or heavy rain followed by dead calm"],
+                    duringEvent: ["Go to basement, storm cellar, or interior room on lowest floor", "Avoid windows", "Cover yourself with mattress or blankets", "If in vehicle, get out and seek shelter in low-lying area", "If outdoors, lie flat in ditch and cover head"],
+                    sources: [
+                        DisasterSource(name: "NOAA - Tornado Safety", url: "https://www.weather.gov/safety/tornado"),
+                        DisasterSource(name: "FEMA - Tornado Preparedness", url: "https://www.ready.gov/tornadoes"),
+                        DisasterSource(name: "American Red Cross - Tornado Safety", url: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/tornado")
+                    ]
+                ),
+                _disaster(
+                    "Flooding",
+                    "drop.triangle.fill",
+                    .high,
+                    "Overflow of water onto normally dry land. Includes flash floods, river floods, and storm surge.",
+                    ["Know your flood zone", "Elevate critical utilities", "Never drive through flooded roads", "Create a flood emergency plan"],
+                    ["Sandbags", "Sump pump", "Waterproof containers", "Water", "Non-perishable food"],
+                    additionalInfo: "Flooding is the most common natural disaster in the United States. There are different types of floods:\n\nFlash floods happen within 6 hours of heavy rain and can occur anywhere.\nRiver floods develop over days or weeks as rivers rise.\nCoastal flooding happens when hurricanes push ocean water onto land.\n\nMoving water is very powerful. Just 6 inches of moving water can knock you down. Twelve inches can carry away a car. Most people who die in floods are in their vehicles. Floodwater can also be dangerous because it often contains sewage, chemicals, and debris.",
+                    warningSigns: ["Heavy rainfall", "Rising water levels", "Flood watch or warning issued", "Rapidly rising streams or rivers", "Water pooling on roads"],
+                    duringEvent: ["Move to higher ground immediately", "Never walk or drive through floodwaters", "Avoid bridges over fast-moving water", "If trapped in vehicle, abandon it and move to higher ground", "Stay away from downed power lines"],
+                    sources: [
+                        DisasterSource(name: "FEMA - Flood Preparedness", url: "https://www.ready.gov/floods"),
+                        DisasterSource(name: "NOAA - Flood Safety", url: "https://www.weather.gov/safety/flood"),
+                        DisasterSource(name: "American Red Cross - Flood Safety", url: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/flood")
+                    ]
+                ),
+                _disaster(
+                    "Severe Thunderstorms",
+                    "cloud.bolt.fill",
+                    .moderate,
+                    "Storms with hail, damaging winds, lightning, and possible tornadoes.",
+                    ["Stay indoors", "Unplug electronics", "Avoid plumbing and corded phones", "Monitor weather alerts"],
+                    ["Flashlight", "Batteries", "Battery radio", "First aid kit"],
+                    additionalInfo: "Severe thunderstorms are storms that produce large hail (at least 1 inch), strong wind gusts over 58 mph, or tornadoes. Lightning strikes the United States about 25 million times each year and kills an average of 47 people annually.\n\nUse the 30-30 rule to stay safe. If you see lightning and hear thunder within 30 seconds, go indoors right away. Wait 30 minutes after you hear the last thunder before going back outside. Lightning can strike up to 10 miles away from where it's raining. Hail can cause serious damage to property and can injure people.",
+                    warningSigns: ["Dark, towering clouds", "Lightning and thunder", "Strong winds", "Large hail", "Heavy rain", "Severe thunderstorm watch or warning"],
+                    duringEvent: ["Stay indoors away from windows", "Avoid electrical equipment and plumbing", "If outdoors, seek shelter immediately", "If in vehicle, stay inside with windows closed", "Avoid tall objects and open areas"],
+                    sources: [
+                        DisasterSource(name: "NOAA - Thunderstorm Safety", url: "https://www.weather.gov/safety/thunderstorm"),
+                        DisasterSource(name: "FEMA - Thunderstorm Preparedness", url: "https://www.ready.gov/thunderstorms-lightning"),
+                        DisasterSource(name: "National Weather Service - Lightning Safety", url: "https://www.weather.gov/safety/lightning")
+                    ]
+                )
             ]
         ),
         DisasterCategory(
@@ -171,8 +253,40 @@ enum EmbeddedData {
             icon: "flame.fill",
             color: "orange",
             disasters: [
-                _disaster("Wildfires", "flame.fill", .extreme, "Uncontrolled fires in wildland areas. Spread quickly with wind and dry conditions.", ["Create defensible space (30 ft)", "Clear gutters and roofs", "Have evacuation go-bag ready", "Know multiple evacuation routes"], ["N95 masks", "Goggles", "Emergency kit", "Important documents", "Pet supplies"]),
-                _disaster("Extreme Heat", "thermometer.sun.fill", .high, "Prolonged periods of dangerously high temperatures. Risk of heat stroke and dehydration.", ["Stay hydrated", "Limit outdoor activity", "Check on vulnerable neighbors", "Know cooling center locations"], ["Water", "Electrolytes", "Sunscreen", "Light clothing", "Cooling towels"])
+                _disaster(
+                    "Wildfires",
+                    "flame.fill",
+                    .extreme,
+                    "Uncontrolled fires in wildland areas. Spread quickly with wind and dry conditions.",
+                    ["Create defensible space (30 ft)", "Clear gutters and roofs", "Have evacuation go-bag ready", "Know multiple evacuation routes"],
+                    ["N95 masks", "Goggles", "Emergency kit", "Important documents", "Pet supplies"],
+                    additionalInfo: "Wildfires can spread very quickly, up to 14 miles per hour, burning everything in their path. They happen most often in the western United States, but can occur anywhere when conditions are dry.\n\nFlying embers can travel up to a mile ahead of the main fire and start new fires. Breathing in smoke is dangerous, especially for people with asthma or other breathing problems. Wildfires can cause power outages, make the air unhealthy to breathe, and force many people to evacuate. Climate change has made wildfires happen more often and burn more intensely.",
+                    warningSigns: ["Red flag warning issued", "Extreme heat and low humidity", "Strong winds", "Smoke visible in distance", "Evacuation order issued", "Unusual smell of smoke"],
+                    duringEvent: ["Evacuate immediately if ordered", "Close all windows and doors", "Wear N95 mask if smoke is present", "Stay indoors with windows closed if not evacuating", "Avoid outdoor activities", "Monitor air quality alerts"],
+                    sources: [
+                        DisasterSource(name: "FEMA - Wildfire Preparedness", url: "https://www.ready.gov/wildfires"),
+                        DisasterSource(name: "USDA Forest Service - Fire Safety", url: "https://www.fs.usda.gov/managing-land/fire"),
+                        DisasterSource(name: "American Red Cross - Wildfire Safety", url: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/wildfire"),
+                        DisasterSource(name: "EPA - Wildfire Smoke Guide", url: "https://www.airnow.gov/wildfire-guide/")
+                    ]
+                ),
+                _disaster(
+                    "Extreme Heat",
+                    "thermometer.sun.fill",
+                    .high,
+                    "Prolonged periods of dangerously high temperatures. Risk of heat stroke and dehydration.",
+                    ["Stay hydrated", "Limit outdoor activity", "Check on vulnerable neighbors", "Know cooling center locations"],
+                    ["Water", "Electrolytes", "Sunscreen", "Light clothing", "Cooling towels"],
+                    additionalInfo: "Extreme heat kills more people in the United States than hurricanes, floods, and tornadoes combined. Heat exhaustion and heat stroke are serious illnesses that can be deadly.\n\nOlder adults, children, and people with ongoing health problems are most at risk. Cities can be much hotter than surrounding areas, sometimes 10 to 15 degrees warmer. This is called the heat island effect. When it's also humid, heat becomes more dangerous because your sweat can't evaporate to cool you down. Never leave children or pets in a parked car. The temperature inside can become deadly in just minutes.",
+                    warningSigns: ["Excessive heat warning issued", "Heat index over 105°F", "Rapid pulse", "Nausea or dizziness", "Confusion", "Hot, dry skin (heat stroke)"],
+                    duringEvent: ["Stay in air-conditioned spaces", "Drink water regularly, avoid alcohol and caffeine", "Wear lightweight, light-colored clothing", "Take cool showers", "Limit outdoor activities to early morning or evening", "Never leave anyone in parked vehicle"],
+                    sources: [
+                        DisasterSource(name: "CDC - Extreme Heat Safety", url: "https://www.cdc.gov/disasters/extremeheat/index.html"),
+                        DisasterSource(name: "NOAA - Heat Safety", url: "https://www.weather.gov/safety/heat"),
+                        DisasterSource(name: "FEMA - Extreme Heat Preparedness", url: "https://www.ready.gov/heat"),
+                        DisasterSource(name: "American Red Cross - Heat Wave Safety", url: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/heat-wave")
+                    ]
+                )
             ]
         ),
         DisasterCategory(
@@ -180,8 +294,39 @@ enum EmbeddedData {
             icon: "snowflake",
             color: "cyan",
             disasters: [
-                _disaster("Blizzards", "cloud.snow.fill", .extreme, "Severe snowstorms with strong winds, poor visibility, and life-threatening conditions.", ["Stay indoors", "Stock emergency supplies", "Keep vehicle fuel tank full", "Have backup heat source"], ["Rock salt", "Shovel", "Blankets", "Water", "Non-perishable food", "Battery radio"]),
-                _disaster("Ice Storms", "cloud.sleet.fill", .high, "Freezing rain that coats surfaces in ice. Causes power outages and dangerous travel.", ["Prepare for power loss", "Avoid travel", "Have alternative heat (safely)", "Stock water and food"], ["Flashlights", "Batteries", "Blankets", "Manual can opener", "First aid kit"])
+                _disaster(
+                    "Blizzards",
+                    "cloud.snow.fill",
+                    .extreme,
+                    "Severe snowstorms with strong winds, poor visibility, and life-threatening conditions.",
+                    ["Stay indoors", "Stock emergency supplies", "Keep vehicle fuel tank full", "Have backup heat source"],
+                    ["Rock salt", "Shovel", "Blankets", "Water", "Non-perishable food", "Battery radio"],
+                    additionalInfo: "Blizzards are severe winter storms with strong winds over 35 mph, very poor visibility less than a quarter mile, and heavy snow that lasts for at least 3 hours. The wind chill can make it feel 30 to 50 degrees colder than the actual temperature. This can cause frostbite in just minutes.\n\nBlizzards create whiteout conditions where you can't see anything, making travel impossible. Power outages are common because heavy snow and ice weigh down power lines. If you're exposed to the cold, you're at serious risk of hypothermia.",
+                    warningSigns: ["Blizzard warning issued", "Heavy snowfall", "Strong winds", "Rapidly dropping temperatures", "Reduced visibility", "Wind chill advisory"],
+                    duringEvent: ["Stay indoors", "If trapped in vehicle, stay inside", "Run engine 10 minutes per hour for heat", "Keep exhaust pipe clear of snow", "Move arms and legs to maintain circulation", "Conserve phone battery"],
+                    sources: [
+                        DisasterSource(name: "NOAA - Winter Weather Safety", url: "https://www.weather.gov/safety/winter"),
+                        DisasterSource(name: "FEMA - Winter Storm Preparedness", url: "https://www.ready.gov/winter-weather"),
+                        DisasterSource(name: "American Red Cross - Winter Storm Safety", url: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/winter-storm"),
+                        DisasterSource(name: "CDC - Winter Weather Safety", url: "https://www.cdc.gov/disasters/winter/index.html")
+                    ]
+                ),
+                _disaster(
+                    "Ice Storms",
+                    "cloud.sleet.fill",
+                    .high,
+                    "Freezing rain that coats surfaces in ice. Causes power outages and dangerous travel.",
+                    ["Prepare for power loss", "Avoid travel", "Have alternative heat (safely)", "Stock water and food"],
+                    ["Flashlights", "Batteries", "Blankets", "Manual can opener", "First aid kit"],
+                    additionalInfo: "Ice storms happen when freezing rain builds up on everything, creating a layer of ice. Even a quarter inch of ice can cause serious damage. The ice can bring down power lines and tree branches, causing widespread power outages.\n\nRoads become extremely dangerous. Black ice is nearly invisible and very slippery. When ice builds up on trees, branches can break and fall, creating hazards. Ice storms can last for days, making it hard to recover.",
+                    warningSigns: ["Freezing rain warning", "Temperatures near or below freezing", "Rain falling in freezing conditions", "Ice accumulating on surfaces", "Power lines sagging", "Tree branches breaking"],
+                    duringEvent: ["Stay off roads", "Avoid walking on icy surfaces", "Keep refrigerator and freezer closed to preserve food", "Use generators safely—never indoors", "Check on elderly neighbors", "Stay away from downed power lines"],
+                    sources: [
+                        DisasterSource(name: "NOAA - Ice Storm Safety", url: "https://www.weather.gov/safety/winter-ice"),
+                        DisasterSource(name: "FEMA - Ice Storm Preparedness", url: "https://www.ready.gov/winter-weather"),
+                        DisasterSource(name: "American Red Cross - Ice Storm Safety", url: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/winter-storm")
+                    ]
+                )
             ]
         ),
         DisasterCategory(
@@ -189,8 +334,40 @@ enum EmbeddedData {
             icon: "mountain.2.fill",
             color: "brown",
             disasters: [
-                _disaster("Earthquakes", "waveform.path.ecg", .extreme, "Sudden shaking of the ground. No advance warning. Can trigger tsunamis and landslides.", ["Drop, Cover, Hold On", "Secure heavy furniture", "Know gas shut-off location", "Practice earthquake drills"], ["Emergency kit", "Wrench for utilities", "Sturdy shoes", "Whistle", "Dust masks"]),
-                _disaster("Landslides", "mountain.2.fill", .high, "Downward movement of soil and rock. Often triggered by heavy rain or earthquakes.", ["Know landslide-prone areas", "Watch for warning signs", "Evacuate if advised", "Avoid steep slopes during storms"], ["Emergency kit", "Battery radio", "Evacuation route map"])
+                _disaster(
+                    "Earthquakes",
+                    "waveform.path.ecg",
+                    .extreme,
+                    "Sudden shaking of the ground. No advance warning. Can trigger tsunamis and landslides.",
+                    ["Drop, Cover, Hold On", "Secure heavy furniture", "Know gas shut-off location", "Practice earthquake drills"],
+                    ["Emergency kit", "Wrench for utilities", "Sturdy shoes", "Whistle", "Dust masks"],
+                    additionalInfo: "Earthquakes happen when the earth's tectonic plates move and release energy, causing the ground to shake. Scientists cannot predict when earthquakes will happen, but some areas are at higher risk, like California, Alaska, and the Pacific Northwest where fault lines are located.\n\nThe Richter Scale measures how strong an earthquake is. Each whole number increase means the ground shakes 10 times more. After the main earthquake, smaller earthquakes called aftershocks can continue for days or weeks. Earthquakes can cause tsunamis, landslides, fires from gas leaks, and building collapses. Most injuries happen from falling objects, not from buildings collapsing.",
+                    warningSigns: ["No advance warning—earthquakes strike suddenly", "If near coast and ground shakes severely, prepare for possible tsunami", "Aftershocks will follow—expect continued shaking"],
+                    duringEvent: ["Drop to hands and knees", "Cover head and neck with arms, crawl under sturdy table", "Hold on until shaking stops", "If in bed, stay there and cover head with pillow", "If outdoors, move to open area away from buildings and trees", "If in vehicle, pull over and stay inside"],
+                    sources: [
+                        DisasterSource(name: "USGS - Earthquake Preparedness", url: "https://www.usgs.gov/natural-hazards/earthquake-hazards/science/earthquake-preparedness"),
+                        DisasterSource(name: "FEMA - Earthquake Preparedness", url: "https://www.ready.gov/earthquakes"),
+                        DisasterSource(name: "American Red Cross - Earthquake Safety", url: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/earthquake"),
+                        DisasterSource(name: "CUSEC - Central US Earthquake Consortium", url: "https://www.cusec.org/")
+                    ]
+                ),
+                _disaster(
+                    "Landslides",
+                    "mountain.2.fill",
+                    .high,
+                    "Downward movement of soil and rock. Often triggered by heavy rain or earthquakes.",
+                    ["Know landslide-prone areas", "Watch for warning signs", "Evacuate if advised", "Avoid steep slopes during storms"],
+                    ["Emergency kit", "Battery radio", "Evacuation route map"],
+                    additionalInfo: "Landslides happen when slopes become unstable due to water, earthquakes, or human activity. They can move slowly over time, or they can move very fast in what's called a debris flow.\n\nHeavy rain is the most common cause. Even just 2 inches of rain in a short time can trigger a landslide. Areas with steep slopes, places that recently had wildfires, or areas that have had landslides before are at higher risk. Landslides can block roads, damage buildings, and cause deaths. Debris flows can move as fast as 35 miles per hour.",
+                    warningSigns: ["Heavy rainfall", "Cracks in ground or pavement", "Bulging ground at base of slope", "Water seeping from slope", "Tilting trees or utility poles", "Landslide warning issued", "Unusual sounds like trees cracking"],
+                    duringEvent: ["Evacuate immediately if in path", "Move to higher ground", "Avoid river valleys and low-lying areas", "Stay away from slide area—watch for additional slides", "Listen for unusual sounds indicating movement"],
+                    sources: [
+                        DisasterSource(name: "USGS - Landslide Hazards", url: "https://www.usgs.gov/natural-hazards/landslide-hazards"),
+                        DisasterSource(name: "FEMA - Landslide Preparedness", url: "https://www.ready.gov/landslides-debris-flow"),
+                        DisasterSource(name: "NOAA - Landslide Safety", url: "https://www.weather.gov/safety/landslide"),
+                        DisasterSource(name: "American Red Cross - Landslide Safety", url: "https://www.redcross.org/get-help/how-to-prepare-for-emergencies/types-of-emergencies/landslide")
+                    ]
+                )
             ]
         )
     ]

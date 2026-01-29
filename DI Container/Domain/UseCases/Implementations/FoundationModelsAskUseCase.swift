@@ -12,7 +12,7 @@ import Foundation
 import FoundationModels
 
 @available(iOS 26.0, *)
-final class FoundationModelsAskUseCase: AskSafeSeasonsUseCaseProtocol {
+final class FoundationModelsAskUseCase: AskSafeSeasonsUseCaseProtocol, @unchecked Sendable {
     private let offlineAIUseCase: OfflineAIUseCaseProtocol
     private var session: LanguageModelSession?
     private let tool: GetContextualTipsTool
