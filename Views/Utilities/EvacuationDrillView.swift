@@ -182,14 +182,17 @@ struct EvacuationDrillView: View {
         timeRemaining = 120
         checkedItems = []
         timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            if timeRemaining > 0 {
-                timeRemaining -= 1
-            } else {
-                stopDrill()
+            Task { @MainActor in
+                if self.timeRemaining > 0 {
+                    self.timeRemaining -= 1
+                } else {
+                    self.stopDrill()
+                }
             }
         }
     }
 
+    @MainActor
     private func stopDrill() {
         isRunning = false
         timer?.invalidate()

@@ -8,44 +8,54 @@
 import SwiftUI
 import UIKit
 
-// MARK: - App Palette (inspired by minimalist landscape: dark navy, muted purples, terracotta accents)
+// MARK: - App Palette (inspired by travel app: purples, blues, orange/yellow accents)
 enum AppColors {
-    // Sky tones (light blue-grey)
-    static let skyBlue = Color(hex: 0xB6C2D6) // Light desaturated blue-grey (#B6C2D6)
-    static let mistGray = Color(hex: 0xE3E1D4) // Light beige/off-white (#E3E1D4)
+    // Primary Purples (deep indigo to lavender)
+    static let deepPurple = Color(hex: 0x4A3C6E) // Deep indigo purple (#4A3C6E)
+    static let mediumPurple = Color(hex: 0x6B5B95) // Medium purple (#6B5B95)
+    static let lightPurple = Color(hex: 0x9B8BB8) // Lavender (#9B8BB8)
+    static let softPurple = Color(hex: 0xC4B5E0) // Soft lavender (#C4B5E0)
     
-    // Dark navy and medium blues (mountains/water)
-    static let darkNavy = Color(hex: 0x283149) // Dark navy blue (#283149)
-    static let mediumBlue = Color(hex: 0x637C9F) // Medium desaturated blue (#637C9F)
-    static let oceanBlue = Color(hex: 0x8B95B1) // Medium blue-grey (#8B95B1)
+    // Primary Blues
+    static let deepBlue = Color(hex: 0x2E4A7C) // Deep blue (#2E4A7C)
+    static let mediumBlue = Color(hex: 0x5B7FA8) // Medium blue (#5B7FA8)
+    static let lightBlue = Color(hex: 0x8BA5C4) // Light blue (#8BA5C4)
+    static let skyBlue = Color(hex: 0xB8D0E8) // Sky blue (#B8D0E8)
     
-    // Purple-grey tones (foreground layers)
-    static let purpleGrey = Color(hex: 0x9887A8) // Muted purple-grey (#9887A8)
-    static let darkPurpleGrey = Color(hex: 0xA692B4) // Darker purple-grey (#A692B4)
-    static let softPurple = Color(hex: 0x9887A8) // Alias for compatibility
+    // Warm Accents (orange and yellow)
+    static let vibrantOrange = Color(hex: 0xFF6B35) // Vibrant orange (#FF6B35)
+    static let warmOrange = Color(hex: 0xFF8C5A) // Warm orange (#FF8C5A)
+    static let softOrange = Color(hex: 0xFFB896) // Soft orange (#FFB896)
+    static let vibrantYellow = Color(hex: 0xFFC947) // Vibrant yellow (#FFC947)
+    static let warmYellow = Color(hex: 0xFFD966) // Warm yellow (#FFD966)
     
-    // Warm accents (house/terracotta)
-    static let terracotta = Color(hex: 0x993D3D) // Muted reddish-brown/terracotta (#993D3D)
-    static let paleBeige = Color(hex: 0xE9DDDD) // Pale beige/pink (#E9DDDD)
-    static let sandyBeige = Color(hex: 0xE3E1D4) // Light beige/off-white (same as mistGray)
-    static let warmBrown = Color(hex: 0x993D3D) // Alias for terracotta
+    // Neutrals (white/off-white/cream)
+    static let cardBg = Color(hex: 0xF8F7F4) // Off-white/cream (#F8F7F4)
+    static let mistGray = Color(hex: 0xF5F4F1) // Light cream (#F5F4F1)
+    static let paleBeige = Color(hex: 0xFAF9F6) // Pale beige (#FAF9F6)
     
-    // Accent colors for CTAs and highlights
-    static let ctaGreen = Color(hex: 0x637C9F) // Using medium blue for CTAs
-    static let softGreen = Color(hex: 0x8B95B1) // Using ocean blue for soft green
-    static let softBlue = Color(hex: 0xB6C2D6) // Using sky blue
+    // Text Colors
+    static let darkNavy = Color(hex: 0x2C2C2C) // Dark gray for text (#2C2C2C)
+    static let darkGray = Color(hex: 0x2C2C2C) // Alias for darkNavy
+    static let mediumGray = Color(hex: 0x666666) // Medium gray (#666666)
     
-    // Neutrals
-    static let cardBg = Color(hex: 0xE3E1D4) // Light beige/off-white
-    static let darkGray = Color(hex: 0x283149) // Dark navy for text/UI
-    
-    // Legacy colors (mapped to new palette)
-    static let mint = softGreen
-    static let softPink = paleBeige
-    static let softCyan = oceanBlue
-    static let softYellow = paleBeige
-    static let softOrange = terracotta
-    static let softCoral = terracotta
+    // Legacy/Compatibility (mapped to new palette)
+    static let ctaGreen = mediumPurple // Using purple for CTAs (primary)
+    static let ctaOrange = vibrantOrange // Orange for secondary CTAs
+    static let ctaYellow = vibrantYellow // Yellow for highlights
+    static let softGreen = lightBlue // Using light blue
+    static let softBlue = skyBlue // Using sky blue
+    static let oceanBlue = mediumBlue // Using medium blue
+    static let purpleGrey = lightPurple // Using light purple
+    static let darkPurpleGrey = mediumPurple // Using medium purple
+    static let terracotta = warmOrange // Using warm orange
+    static let sandyBeige = cardBg // Using cardBg
+    static let warmBrown = warmOrange // Using warm orange
+    static let mint = skyBlue // Using sky blue
+    static let softPink = softPurple // Using soft purple
+    static let softCyan = lightBlue // Using light blue
+    static let softYellow = warmYellow // Using warm yellow
+    static let softCoral = softOrange // Using soft orange
 }
 
 // MARK: - Color Hex Extension
@@ -249,7 +259,7 @@ extension ChecklistItem.Priority {
     }
 }
 
-// MARK: - Resource Type
+
 extension EmergencyResource.ResourceType {
     var icon: String {
         switch self {
@@ -277,7 +287,6 @@ extension EmergencyResource.ResourceType {
     }
 }
 
-// MARK: - Shared Browse UI
 struct CategorySectionHeader: View {
     let icon: String
     let color: Color

@@ -86,7 +86,7 @@ final class HomeViewModel: ObservableObject {
         chatMessages.append(userMessage)
 
         // Try streaming first if available, else use regular ask
-        if let extended = extendedFeatures?.askUseCase as? StreamingAskUseCaseProtocol {
+        if extendedFeatures?.askUseCase is StreamingAskUseCaseProtocol {
             streamAsk(question: q)
         } else {
             regularAsk(question: q)
@@ -113,11 +113,13 @@ final class HomeViewModel: ObservableObject {
                 let answer = try await useCase.ask(question: question, context: context)
                 // Hop back to the main actor to update published properties
                 await MainActor.run {
-                    self.askResponse = answer
+                    // Clean the response to remove null prefixes and repetition
+                    let cleanedAnswer = self.cleanResponse(answer)
+                    self.askResponse = cleanedAnswer
                     self.lastUsedAppleIntelligence = aiAvailable
                     self.isAsking = false
                     // Add AI response to chat history
-                    let aiMessage = ChatMessage(content: answer, isUser: false, usedAppleIntelligence: aiAvailable)
+                    let aiMessage = ChatMessage(content: cleanedAnswer, isUser: false, usedAppleIntelligence: aiAvailable)
                     self.chatMessages.append(aiMessage)
                 }
             } catch {
@@ -159,8 +161,10 @@ final class HomeViewModel: ObservableObject {
                 }
                 await MainActor.run {
                     self.isStreaming = false
+                    // Clean the response to remove null prefixes and repetition
+                    let cleanedResponse = self.cleanResponse(fullResponse)
                     // Add complete AI response to chat history
-                    let aiMessage = ChatMessage(content: fullResponse, isUser: false, usedAppleIntelligence: aiAvailable)
+                    let aiMessage = ChatMessage(content: cleanedResponse, isUser: false, usedAppleIntelligence: aiAvailable)
                     self.chatMessages.append(aiMessage)
                     self.streamingResponse = ""
                 }
@@ -281,6 +285,53 @@ final class HomeViewModel: ObservableObject {
     /// Clear conversation session
     func clearConversationSession() {
         extendedFeatures?.conversationSession.clearSession()
+    }
+    
+    // MARK: - Response Cleaning
+    
+    /// Cleans response content to remove null prefixes, excessive repetition, and other artifacts
+    private func cleanResponse(_ content: String) -> String {
+        var cleaned = content
+        
+        // Remove "null" prefix (case insensitive, with various whitespace patterns)
+        let nullPatterns = ["null", "null ", "null\n", "null\t"]
+        for pattern in nullPatterns {
+            if cleaned.lowercased().hasPrefix(pattern.lowercased()) {
+                cleaned = String(cleaned.dropFirst(pattern.count)).trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+                break
+            }
+        }
+        
+        // Remove excessive repetition by detecting repeated sentences
+        let sentences = cleaned.components(separatedBy: CharacterSet(charactersIn: ".!?\n"))
+            .map { $0.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines) }
+            .filter { !$0.isEmpty && $0.count > 10 } // Filter out very short fragments
+        
+        var uniqueSentences: [String] = []
+        var seenSentences = Set<String>()
+        
+        for sentence in sentences {
+            // Normalize for comparison (lowercase, remove extra spaces)
+            let normalized = sentence.lowercased()
+                .replacingOccurrences(of: "\\s+", with: " ", options: .regularExpression)
+                .trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
+            
+            // Only add if we haven't seen this exact sentence before
+            if !normalized.isEmpty && !seenSentences.contains(normalized) {
+                seenSentences.insert(normalized)
+                uniqueSentences.append(sentence)
+            }
+        }
+        
+        // Rejoin sentences with proper punctuation
+        if !uniqueSentences.isEmpty {
+            cleaned = uniqueSentences.joined(separator: ". ")
+            if !cleaned.hasSuffix(".") && !cleaned.hasSuffix("!") && !cleaned.hasSuffix("?") {
+                cleaned += "."
+            }
+        }
+        
+        return cleaned.trimmingCharacters(in: CharacterSet.whitespacesAndNewlines)
     }
 }
 
