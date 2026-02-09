@@ -41,11 +41,15 @@ final class RuleBasedAskUseCase: AskSafeSeasonsUseCaseProtocol, @unchecked Senda
             return out
         }
 
-        let tips = offlineAIUseCase.getContextualTips(state: context.state, month: context.month)
-        if !tips.isEmpty, let state = context.state {
-            var out = "This month in \(state.name):\n\n"
-            out += tips.map { "• \($0)" }.joined(separator: "\n")
-            return out
+        // Only return state tips when the user explicitly asked about state / this month (not for unrelated questions like "tell me about mouse").
+        let asksAboutStateOrMonth = q.contains("state") || q.contains("this month") || q.contains("my state") || q.contains("my area") || (context.state.map { q.contains($0.name.lowercased()) || q.contains($0.abbreviation.lowercased()) } ?? false)
+        if asksAboutStateOrMonth, let state = context.state {
+            let tips = offlineAIUseCase.getContextualTips(state: state, month: context.month)
+            if !tips.isEmpty {
+                var out = "This month in \(state.name):\n\n"
+                out += tips.map { "• \($0)" }.joined(separator: "\n")
+                return out
+            }
         }
 
         return "Use the Browse tab to explore hazards (tornadoes, floods, hurricanes, etc.) and their steps. Select your state on Home for \"This month\" tips. For life-threatening emergencies, call 911."

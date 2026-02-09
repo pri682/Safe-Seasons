@@ -1,9 +1,4 @@
-//
-//  AskSafeSeasonsUseCaseProtocol.swift
-//  SafeSeasons
-//
-//  SRP: Q&A orchestration for "Ask SafeSeasons". DIP: depends on rule-based and optional FM providers.
-//
+
 
 import Foundation
 
@@ -21,6 +16,11 @@ protocol AskSafeSeasonsUseCaseProtocol: Sendable {
     func ask(question: String, context: AskContext) async throws -> String
 }
 
-/// Extended protocol for streaming support
+
 protocol ExtendedAskSafeSeasonsUseCaseProtocol: AskSafeSeasonsUseCaseProtocol, StreamingAskUseCaseProtocol {
+   
+}
+
+extension ExtendedAskSafeSeasonsUseCaseProtocol {
+    func prewarmModel() {}
 }

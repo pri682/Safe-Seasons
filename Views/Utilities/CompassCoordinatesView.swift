@@ -7,31 +7,52 @@
 
 import SwiftUI
 import CoreLocation
+import UIKit
 
-class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
+@MainActor
+final class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let manager = CLLocationManager()
     @Published var location: CLLocation?
-    @Published var heading: CLHeading?
+    /// Heading in degrees (from magnetic north). Avoids capturing non-Sendable CLHeading across isolation.
+    @Published var headingDegrees: Double?
     @Published var authorizationStatus: CLAuthorizationStatus = .notDetermined
 
     override init() {
         super.init()
         manager.delegate = self
         manager.desiredAccuracy = kCLLocationAccuracyBest
-        authorizationStatus = manager.authorizationStatus
+        manager.distanceFilter = 5
+        manager.activityType = .other
+        if #available(iOS 14.0, *) {
+            authorizationStatus = manager.authorizationStatus
+        } else {
+            authorizationStatus = CLLocationManager.authorizationStatus()
+        }
     }
 
     func requestPermission() {
-        manager.requestWhenInUseAuthorization()
+        // Defer to next run loop so the system permission dialog can appear (avoids no-op when triggered from a button tap).
+        DispatchQueue.main.async { [weak self] in
+            self?.manager.requestWhenInUseAuthorization()
+        }
     }
 
     func startUpdates() {
-        guard authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways else {
+        let status: CLAuthorizationStatus
+        if #available(iOS 14.0, *) {
+            status = manager.authorizationStatus
+        } else {
+            status = CLLocationManager.authorizationStatus()
+        }
+        authorizationStatus = status
+
+        guard status == .authorizedWhenInUse || status == .authorizedAlways else {
             requestPermission()
             return
         }
         manager.startUpdatingLocation()
         if CLLocationManager.headingAvailable() {
+            manager.headingFilter = 3
             manager.startUpdatingHeading()
         }
     }
@@ -41,18 +62,33 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         manager.stopUpdatingHeading()
     }
 
-    func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        location = locations.last
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        guard let last = locations.last else { return }
+        Task { @MainActor [weak self] in
+            self?.location = last
+        }
     }
 
-    func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
-        heading = newHeading
+    nonisolated func locationManager(_ manager: CLLocationManager, didUpdateHeading newHeading: CLHeading) {
+        let degrees = newHeading.magneticHeading
+        Task { @MainActor [weak self] in
+            self?.headingDegrees = degrees
+        }
     }
 
-    func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        authorizationStatus = manager.authorizationStatus
-        if authorizationStatus == .authorizedWhenInUse || authorizationStatus == .authorizedAlways {
-            startUpdates()
+    nonisolated func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        let status: CLAuthorizationStatus
+        if #available(iOS 14.0, *) {
+            status = manager.authorizationStatus
+        } else {
+            status = CLLocationManager.authorizationStatus()
+        }
+        Task { @MainActor [weak self] in
+            guard let self = self else { return }
+            self.authorizationStatus = status
+            if status == .authorizedWhenInUse || status == .authorizedAlways {
+                self.startUpdates()
+            }
         }
     }
 }
@@ -80,11 +116,11 @@ struct CompassCoordinatesView: View {
                     }
                     
                     // Needle
-                    if let heading = locationManager.heading {
+                    if let degrees = locationManager.headingDegrees {
                         Image(systemName: "location.north.fill")
                             .font(.system(size: 40))
                             .foregroundStyle(.red)
-                            .rotationEffect(.degrees(-heading.magneticHeading))
+                            .rotationEffect(.degrees(-degrees))
                     } else {
                         Image(systemName: "location.north.fill")
                             .font(.system(size: 40))
@@ -122,24 +158,62 @@ struct CompassCoordinatesView: View {
                         .background(AppColors.softBlue.opacity(0.3))
                         .clipShape(RoundedRectangle(cornerRadius: 16))
                     } else {
-                        VStack(spacing: 12) {
-                            Image(systemName: "location.slash")
-                                .font(.system(size: 40))
-                                .foregroundStyle(.secondary)
-                            Text("Location unavailable")
-                                .font(.headline)
-                                .foregroundStyle(.secondary)
-                            if locationManager.authorizationStatus == .notDetermined || locationManager.authorizationStatus == .denied {
-                                Button {
-                                    locationManager.requestPermission()
-                                } label: {
-                                    Text("Enable Location")
-                                        .font(.headline)
-                                        .foregroundStyle(.white)
-                                        .padding(.horizontal, 24)
-                                        .padding(.vertical, 12)
-                                        .background(AppColors.ctaGreen)
-                                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                        VStack(spacing: 16) {
+                            if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
+                                ProgressView()
+                                    .scaleEffect(1.2)
+                                    .tint(AppColors.mediumBlue)
+                                Text("Acquiring location…")
+                                    .font(.headline)
+                                    .foregroundStyle(.secondary)
+                            } else {
+                                Image(systemName: "location.slash")
+                                    .font(.system(size: 40))
+                                    .foregroundStyle(.secondary)
+                                Text("Location unavailable")
+                                    .font(.headline)
+                                    .foregroundStyle(.secondary)
+                                Text("Enable location to see coordinates and use the compass.")
+                                    .font(.subheadline)
+                                    .foregroundStyle(.secondary)
+                                    .multilineTextAlignment(.center)
+                                    .padding(.horizontal)
+
+                                VStack(spacing: 12) {
+                                    if locationManager.authorizationStatus == .notDetermined {
+                                        Button {
+                                            locationManager.requestPermission()
+                                        } label: {
+                                            Text("Enable Location")
+                                                .font(.headline)
+                                                .foregroundStyle(.white)
+                                                .padding(.horizontal, 24)
+                                                .padding(.vertical, 12)
+                                                .background(AppColors.ctaGreen)
+                                                .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        }
+                                        Text("If no prompt appears, use Open Settings below.")
+                                            .font(.caption2)
+                                            .foregroundStyle(.tertiary)
+                                    }
+                                    if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted || locationManager.authorizationStatus == .notDetermined {
+                                        Button {
+                                            if let url = URL(string: UIApplication.openSettingsURLString) {
+                                                UIApplication.shared.open(url)
+                                            }
+                                        } label: {
+                                            HStack(spacing: 6) {
+                                                Image(systemName: "gear")
+                                                Text("Open Settings")
+                                                    .font(.headline)
+                                            }
+                                            .foregroundStyle(.white)
+                                            .padding(.horizontal, 24)
+                                            .padding(.vertical, 12)
+                                            .background(AppColors.mediumPurple)
+                                            .clipShape(RoundedRectangle(cornerRadius: 12))
+                                        }
+                                    }
                                 }
                             }
                         }
@@ -165,6 +239,9 @@ struct CompassCoordinatesView: View {
             }
             .onDisappear {
                 locationManager.stopUpdates()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                locationManager.startUpdates()
             }
         }
     }

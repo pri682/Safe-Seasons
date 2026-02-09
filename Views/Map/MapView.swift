@@ -2,23 +2,121 @@
 //  MapView.swift
 //  SafeSeasons
 //
-//  Map tab: emergency resources map, legend. Embedded data only (no network).
+//  Map tab: emergency resources map, legend. GPS + “Near me” = filter by distance (fully offline).
 //
 
 import SwiftUI
 import MapKit
+import CoreLocation
+import UIKit
 
 struct MapView: View {
     @EnvironmentObject private var viewModel: MapViewModel
+    @StateObject private var locationManager = LocationManager()
+    @State private var centerOnUser = false
+    @State private var showNearMeUnavailable = false
 
     var body: some View {
         NavigationView {
             ZStack(alignment: .bottom) {
-                MapViewRepresentable(resources: viewModel.filteredResources)
+                MapViewRepresentable(
+                    resources: viewModel.displayResources,
+                    centerOnUser: $centerOnUser
+                )
+                if let err = viewModel.nearMeError {
+                    Text(err)
+                        .font(.caption)
+                        .foregroundStyle(.white)
+                        .multilineTextAlignment(.center)
+                        .padding(10)
+                        .background(.black.opacity(0.75))
+                        .clipShape(RoundedRectangle(cornerRadius: 10))
+                        .padding(.horizontal)
+                        .padding(.bottom, 140)
+                }
                 mapLegend
             }
             .navigationTitle("Emergency Map")
-            .onAppear { viewModel.load() }
+            .toolbar {
+                ToolbarItem(placement: .primaryAction) {
+                    HStack(spacing: 16) {
+                        if viewModel.nearMeCenter != nil {
+                            Button {
+                                viewModel.clearNearMeFilter()
+                            } label: {
+                                Image(systemName: "map")
+                                    .font(.body.weight(.medium))
+                            }
+                            .accessibilityLabel("Show all locations")
+                        }
+                        Button {
+                            findNearMe()
+                        } label: {
+                            Image(systemName: "magnifyingglass.circle.fill")
+                                .font(.title2)
+                        }
+                        .accessibilityLabel("Show fire stations, hospitals, police, and shelters near me")
+
+                        Button {
+                            centerOnUserOrRequestLocation()
+                        } label: {
+                            Image(systemName: "location.fill")
+                                .font(.body.weight(.medium))
+                        }
+                        .accessibilityLabel("Center on my location")
+                    }
+                }
+            }
+            .onAppear {
+                viewModel.load()
+                locationManager.startUpdates()
+            }
+            .onDisappear {
+                locationManager.stopUpdates()
+            }
+            .onReceive(NotificationCenter.default.publisher(for: UIApplication.willEnterForegroundNotification)) { _ in
+                locationManager.startUpdates()
+            }
+            .alert("Location needed", isPresented: $showNearMeUnavailable) {
+                Button("OK", role: .cancel) { }
+                if locationManager.authorizationStatus == .denied || locationManager.authorizationStatus == .restricted {
+                    Button("Open Settings") {
+                        if let url = URL(string: UIApplication.openSettingsURLString) {
+                            UIApplication.shared.open(url)
+                        }
+                    }
+                }
+            } message: {
+                Text("Enable location to show which emergency locations are nearest to you (works offline).")
+            }
+        }
+    }
+
+    private func findNearMe() {
+        viewModel.nearMeError = nil
+        guard let coord = locationManager.location?.coordinate else {
+            if locationManager.authorizationStatus == .notDetermined {
+                locationManager.requestPermission()
+                // Don't show our alert; let the system permission dialog be the only prompt.
+            } else {
+                showNearMeUnavailable = true
+            }
+            return
+        }
+        let center = CLLocationCoordinate2D(latitude: coord.latitude, longitude: coord.longitude)
+        viewModel.focusNearMe(center: center)
+        centerOnUser = true
+    }
+
+    private func centerOnUserOrRequestLocation() {
+        if locationManager.location != nil {
+            centerOnUser = true
+            return
+        }
+        if locationManager.authorizationStatus == .notDetermined {
+            locationManager.requestPermission()
+        } else {
+            showNearMeUnavailable = true
         }
     }
 
@@ -49,11 +147,13 @@ struct MapView: View {
 
 struct MapViewRepresentable: UIViewRepresentable {
     let resources: [EmergencyResource]
+    @Binding var centerOnUser: Bool
 
     func makeUIView(context: Context) -> MKMapView {
         let map = MKMapView()
         map.delegate = context.coordinator
-        map.showsUserLocation = false
+        map.showsUserLocation = true
+        map.userTrackingMode = .none
         map.register(MKMarkerAnnotationView.self, forAnnotationViewWithReuseIdentifier: "Resource")
         return map
     }
@@ -65,6 +165,19 @@ struct MapViewRepresentable: UIViewRepresentable {
         let toRemove = existing.filter { !resources.map(\.id).contains($0.resource.id) }
         map.removeAnnotations(toRemove)
         map.addAnnotations(toAdd.map { ResourceAnnotation(resource: $0) })
+
+        if centerOnUser {
+            if let userLoc = map.userLocation.location {
+                let region = MKCoordinateRegion(
+                    center: userLoc.coordinate,
+                    span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+                )
+                map.setRegion(region, animated: true)
+            }
+            DispatchQueue.main.async { centerOnUser = false }
+            return
+        }
+
         if !resources.isEmpty {
             let coords = resources.map { CLLocationCoordinate2D(latitude: $0.coordinate.latitude, longitude: $0.coordinate.longitude) }
             let lats = coords.map(\.latitude)
