@@ -10,11 +10,11 @@ import UIKit
 
 // MARK: - App Palette (inspired by travel app: purples, blues, orange/yellow accents)
 enum AppColors {
-    // Primary Purples (deep indigo to lavender)
-    static let deepPurple = Color(hex: 0x4A3C6E) // Deep indigo purple (#4A3C6E)
-    static let mediumPurple = Color(hex: 0x6B5B95) // Medium purple (#6B5B95)
-    static let lightPurple = Color(hex: 0x9B8BB8) // Lavender (#9B8BB8)
-    static let softPurple = Color(hex: 0xC4B5E0) // Soft lavender (#C4B5E0)
+    // Primary Purples (darker indigo to lavender)
+    static let deepPurple = Color(hex: 0x3A2E58) // Dark indigo purple (#3A2E58)
+    static let mediumPurple = Color(hex: 0x55457A) // Darker medium purple (#55457A)
+    static let lightPurple = Color(hex: 0x6B5B95) // Purple (#6B5B95)
+    static let softPurple = Color(hex: 0x8A7AB0) // Soft purple (#8A7AB0)
     
     // Primary Blues
     static let deepBlue = Color(hex: 0x2E4A7C) // Deep blue (#2E4A7C)

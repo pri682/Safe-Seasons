@@ -17,6 +17,7 @@ struct HomeView: View {
     @State private var showDigitalBeacon = false
     @State private var showEvacuationDrill = false
     @State private var showCompassCoordinates = false
+    @State private var showEmergencySOSViaSatellite = false
     @State private var showUtilityInfo: UtilityType? = nil
     @State private var pendingUtility: UtilityType? = nil
     @State private var showRiskOverviewInfo = false
@@ -41,6 +42,9 @@ struct HomeView: View {
                 VStack(spacing: 16) {
                     // Row 1: Emergency CTA (full width)
                     emergencyCTACard
+                    
+                    // Row 1.2: Emergency SOS via satellite (iPhone 14+) – opens Apple guide directly
+                    emergencySOSViaSatelliteCard
                     
                     // Row 1.5: Ask SafeSeasons Conversational UI (full width)
                     askSafeSeasonsConversationalCard
@@ -103,6 +107,9 @@ struct HomeView: View {
             }
             .fullScreenCover(isPresented: $showCompassCoordinates) {
                 CompassCoordinatesView()
+            }
+            .fullScreenCover(isPresented: $showEmergencySOSViaSatellite) {
+                EmergencySOSViaSatelliteView()
             }
             .sheet(item: $showUtilityInfo) { utilityType in
                 UtilityInfoSheet(utilityType: utilityType) {
@@ -168,6 +175,48 @@ struct HomeView: View {
             )
             .clipShape(RoundedRectangle(cornerRadius: 24))
             .shadow(color: .red.opacity(0.3), radius: 12, x: 0, y: 4)
+        }
+        .buttonStyle(.plain)
+    }
+
+    private var emergencySOSViaSatelliteCard: some View {
+        Button {
+            showEmergencySOSViaSatellite = true
+        } label: {
+            VStack(alignment: .leading, spacing: 14) {
+                HStack(spacing: 12) {
+                    Image(systemName: "antenna.radiowaves.left.and.right")
+                        .font(.title2)
+                        .foregroundStyle(.white)
+                        .frame(width: 48, height: 48)
+                        .background(AppColors.mediumPurple)
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                    VStack(alignment: .leading, spacing: 4) {
+                        Text("Emergency SOS via satellite")
+                            .font(.headline.weight(.semibold))
+                            .foregroundStyle(.primary)
+                        Text("iPhone 14 or later • Text emergency services when you're off the grid")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                    }
+                    Spacer(minLength: 8)
+                    Image(systemName: "doc.text.fill")
+                        .font(.subheadline.weight(.semibold))
+                        .foregroundStyle(AppColors.mediumPurple)
+                }
+                Text("Open in-app guide: how it works, steps, and link to Apple Support.")
+                    .font(.caption2)
+                    .foregroundStyle(.secondary)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(20)
+            .background(AppColors.softPurple.opacity(0.25))
+            .clipShape(RoundedRectangle(cornerRadius: 24))
+            .overlay(
+                RoundedRectangle(cornerRadius: 24)
+                    .stroke(AppColors.mediumPurple.opacity(0.4), lineWidth: 1)
+            )
+            .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
         }
         .buttonStyle(.plain)
     }
@@ -1235,124 +1284,182 @@ struct AskSafeSeasonsSheet: View {
                     )
                 )
                 
-                ScrollView {
-                    VStack(alignment: .leading, spacing: 24) {
-                        // Instructions
-                        VStack(alignment: .leading, spacing: 12) {
-                            Text("Ask a preparedness question")
-                                .font(.headline.weight(.semibold))
-                                .foregroundStyle(AppColors.darkNavy)
-                            Text("Examples: \"What should I do during a tornado?\" or \"How do I prepare for a hurricane?\"")
-                                .font(.subheadline)
-                                .foregroundStyle(AppColors.darkNavy.opacity(0.7))
-                                .lineSpacing(4)
-                        }
-                        .padding()
-                        .background(AppColors.skyBlue.opacity(0.2))
-                        .clipShape(RoundedRectangle(cornerRadius: 16))
-                        .padding(.top, 20)
-                        
-                        // Input field
-                        VStack(alignment: .leading, spacing: 12) {
-                            HStack(spacing: 12) {
-                                TextField("Your question…", text: $questionText, axis: .vertical)
-                                    .textFieldStyle(.plain)
-                                    .font(.body)
-                                    .padding(.horizontal, 16)
-                                    .padding(.vertical, 14)
-                                    .background(AppColors.paleBeige.opacity(0.6))
-                                    .clipShape(RoundedRectangle(cornerRadius: 16))
-                                    .lineLimit(2...6)
-                                    .focused($isFieldFocused)
+                // Scroll: instructions first, then conversation, then input
+                ScrollViewReader { proxy in
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 24) {
+                            // Instructions — always at top so user sees prompt before their messages
+                            VStack(alignment: .leading, spacing: 12) {
+                                Text("Ask a preparedness question")
+                                    .font(.headline.weight(.semibold))
                                     .foregroundStyle(AppColors.darkNavy)
-                                Button {
-                                    isFieldFocused = false
-                                    viewModel.ask(question: questionText)
-                                    questionText = ""
-                                } label: {
-                                    Image(systemName: "arrow.up.circle.fill")
-                                        .font(.title2)
-                                        .foregroundStyle(questionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isAsking ? AppColors.darkNavy.opacity(0.3) : AppColors.mediumBlue)
-                                }
-                                .disabled(questionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isAsking)
+                                Text("Examples: \"What should I do during a tornado?\" or \"How do I prepare for a hurricane?\"")
+                                    .font(.subheadline)
+                                    .foregroundStyle(AppColors.darkNavy.opacity(0.7))
+                                    .lineSpacing(4)
                             }
+                            .padding()
+                            .background(AppColors.skyBlue.opacity(0.2))
+                            .clipShape(RoundedRectangle(cornerRadius: 16))
+                            .padding(.top, 20)
                             
-                            if viewModel.isAsking {
-                                HStack(spacing: 10) {
-                                    ProgressView()
-                                        .tint(AppColors.mediumBlue)
-                                    Text("Thinking…")
-                                        .font(.subheadline)
-                                        .foregroundStyle(AppColors.darkNavy.opacity(0.7))
-                                }
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 4)
-                            }
-                            
-                            if let err = viewModel.askError {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "exclamationmark.triangle.fill")
-                                        .foregroundStyle(.red)
-                                    Text(err)
-                                        .font(.subheadline)
-                                        .foregroundStyle(.red)
-                                }
-                                .padding()
-                                .background(Color.red.opacity(0.1))
-                                .clipShape(RoundedRectangle(cornerRadius: 12))
-                            }
-                        }
-                        .padding(.horizontal)
-                        
-                        // Response
-                        if !viewModel.askResponse.isEmpty {
-                            VStack(alignment: .leading, spacing: 16) {
-                                HStack(spacing: 8) {
-                                    Image(systemName: "sparkles")
-                                        .font(.subheadline)
-                                        .foregroundStyle(AppColors.mediumBlue)
-                                    Text("Response")
-                                        .font(.headline.weight(.semibold))
-                                        .foregroundStyle(AppColors.darkNavy)
-                                }
-                                
-                                Text(viewModel.askResponse)
-                                    .font(.body)
-                                    .foregroundStyle(AppColors.darkNavy.opacity(0.9))
-                                    .lineSpacing(6)
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                
-                                if viewModel.lastUsedAppleIntelligence {
-                                    HStack(spacing: 4) {
-                                        Image(systemName: "apple.logo")
-                                            .font(.caption2)
-                                        Text("Apple Intelligence")
-                                            .font(.caption2)
+                            // Chat messages and streaming response (below instructions)
+                            if !viewModel.chatMessages.isEmpty || viewModel.isStreaming {
+                                VStack(alignment: .leading, spacing: 16) {
+                                    ForEach(viewModel.chatMessages) { message in
+                                        ChatBubble(message: message)
+                                            .id(message.id)
                                     }
-                                    .foregroundStyle(AppColors.darkNavy.opacity(0.5))
-                                    .padding(.top, 6)
+                                    if viewModel.isStreaming && !viewModel.streamingResponse.isEmpty {
+                                        ChatBubble(message: ChatMessage(content: viewModel.streamingResponse, isUser: false, usedAppleIntelligence: viewModel.lastUsedAppleIntelligence))
+                                            .id("streaming")
+                                    }
+                                    if viewModel.isAsking || viewModel.isStreaming {
+                                        HStack(spacing: 10) {
+                                            ProgressView()
+                                                .scaleEffect(0.8)
+                                                .tint(AppColors.mediumBlue)
+                                            Text(viewModel.isStreaming ? "Generating…" : "Thinking…")
+                                                .font(.subheadline)
+                                                .foregroundStyle(AppColors.darkNavy.opacity(0.7))
+                                        }
+                                        .padding(.vertical, 8)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    }
+                                }
+                                .padding(.horizontal, 20)
+                                .padding(.top, 8)
+                            }
+                            
+                            // Non-streaming single response (when no chat messages yet)
+                            if viewModel.chatMessages.isEmpty && !viewModel.askResponse.isEmpty {
+                                VStack(alignment: .leading, spacing: 16) {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "sparkles")
+                                            .font(.subheadline)
+                                            .foregroundStyle(AppColors.mediumBlue)
+                                        Text("Response")
+                                            .font(.headline.weight(.semibold))
+                                            .foregroundStyle(AppColors.darkNavy)
+                                    }
+                                    Text(viewModel.askResponse)
+                                        .font(.body)
+                                        .foregroundStyle(AppColors.darkNavy.opacity(0.9))
+                                        .lineSpacing(6)
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                    if viewModel.lastUsedAppleIntelligence {
+                                        HStack(spacing: 4) {
+                                            Image(systemName: "apple.logo")
+                                                .font(.caption2)
+                                            Text("Apple Intelligence")
+                                                .font(.caption2)
+                                        }
+                                        .foregroundStyle(AppColors.darkNavy.opacity(0.5))
+                                        .padding(.top, 6)
+                                    }
+                                }
+                                .padding(20)
+                                .frame(maxWidth: .infinity, alignment: .leading)
+                                .background(
+                                    LinearGradient(
+                                        colors: [AppColors.skyBlue.opacity(0.4), AppColors.oceanBlue.opacity(0.3)],
+                                        startPoint: .topLeading,
+                                        endPoint: .bottomTrailing
+                                    )
+                                )
+                                .clipShape(RoundedRectangle(cornerRadius: 20))
+                                .overlay(
+                                    RoundedRectangle(cornerRadius: 20)
+                                        .stroke(AppColors.mediumBlue.opacity(0.3), lineWidth: 1.5)
+                                )
+                                .padding(.horizontal, 20)
+                                .padding(.top, 8)
+                            }
+                            
+                            // Input field — darker purple so placeholder and send button are easy to see
+                            VStack(alignment: .leading, spacing: 12) {
+                                HStack(spacing: 12) {
+                                    ZStack(alignment: .topLeading) {
+                                        if questionText.isEmpty {
+                                            Text("Your question…")
+                                                .font(.body)
+                                                .foregroundStyle(AppColors.mediumPurple.opacity(0.85))
+                                                .padding(.horizontal, 16)
+                                                .padding(.vertical, 14)
+                                        }
+                                        TextField("", text: $questionText, axis: .vertical)
+                                            .textFieldStyle(.plain)
+                                            .font(.body)
+                                            .padding(.horizontal, 16)
+                                            .padding(.vertical, 14)
+                                            .lineLimit(2...6)
+                                            .focused($isFieldFocused)
+                                            .foregroundStyle(AppColors.darkNavy)
+                                            .tint(AppColors.deepPurple)
+                                    }
+                                    .background(AppColors.skyBlue.opacity(0.25))
+                                    .clipShape(RoundedRectangle(cornerRadius: 16))
+                                    .overlay(
+                                        RoundedRectangle(cornerRadius: 16)
+                                            .stroke(AppColors.mediumPurple.opacity(0.4), lineWidth: 1.5)
+                                    )
+                                    Button {
+                                        isFieldFocused = false
+                                        viewModel.ask(question: questionText)
+                                        questionText = ""
+                                    } label: {
+                                        Image(systemName: "arrow.up.circle.fill")
+                                            .font(.title2)
+                                            .foregroundStyle(questionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isAsking ? AppColors.mediumPurple.opacity(0.7) : AppColors.deepPurple)
+                                    }
+                                    .disabled(questionText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || viewModel.isAsking)
+                                }
+                                
+                                if viewModel.isAsking && viewModel.chatMessages.isEmpty {
+                                    HStack(spacing: 10) {
+                                        ProgressView()
+                                            .tint(AppColors.mediumBlue)
+                                        Text("Thinking…")
+                                            .font(.subheadline)
+                                            .foregroundStyle(AppColors.darkNavy.opacity(0.7))
+                                    }
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 4)
+                                }
+                                
+                                if let err = viewModel.askError {
+                                    HStack(spacing: 8) {
+                                        Image(systemName: "exclamationmark.triangle.fill")
+                                            .foregroundStyle(.red)
+                                        Text(err)
+                                            .font(.subheadline)
+                                            .foregroundStyle(.red)
+                                    }
+                                    .padding()
+                                    .background(Color.red.opacity(0.1))
+                                    .clipShape(RoundedRectangle(cornerRadius: 12))
                                 }
                             }
-                            .padding(20)
-                            .frame(maxWidth: .infinity, alignment: .leading)
-                            .background(
-                                LinearGradient(
-                                    colors: [AppColors.skyBlue.opacity(0.4), AppColors.oceanBlue.opacity(0.3)],
-                                    startPoint: .topLeading,
-                                    endPoint: .bottomTrailing
-                                )
-                            )
-                            .clipShape(RoundedRectangle(cornerRadius: 20))
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 20)
-                                    .stroke(AppColors.mediumBlue.opacity(0.3), lineWidth: 1.5)
-                            )
-                            .padding(.horizontal)
+                            .padding(.horizontal, 20)
+                        }
+                        .padding(.bottom, 24)
+                    }
+                    .background(AppColors.cardBg)
+                    .onChange(of: viewModel.chatMessages.count) { _ in
+                        if let last = viewModel.chatMessages.last {
+                            withAnimation(.easeOut(duration: 0.3)) {
+                                proxy.scrollTo(last.id, anchor: .bottom)
+                            }
                         }
                     }
-                    .padding(.bottom, 20)
+                    .onChange(of: viewModel.streamingResponse) { _ in
+                        if viewModel.isStreaming {
+                            withAnimation(.easeOut(duration: 0.2)) {
+                                proxy.scrollTo("streaming", anchor: .bottom)
+                            }
+                        }
+                    }
                 }
-                .background(AppColors.cardBg)
             }
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -1367,7 +1474,10 @@ struct AskSafeSeasonsSheet: View {
                 }
             }
         }
-        .onAppear { viewModel.clearAskState() }
+        .onAppear {
+            viewModel.clearChatHistory()
+            viewModel.prewarmModel()
+        }
     }
 }
 

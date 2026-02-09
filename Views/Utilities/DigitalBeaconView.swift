@@ -3,6 +3,8 @@
 //  SafeSeasons
 //
 //  Offline SOS beacon: flashlight + screen flash in Morse code.
+//  SOS pattern (••• --- •••) follows International Morse code, the standard
+//  distress signal adopted internationally (e.g. maritime/aviation).
 //
 
 import SwiftUI
@@ -13,10 +15,12 @@ struct DigitalBeaconView: View {
     @State private var flashTask: Task<Void, Never>?
     @Environment(\.dismiss) private var dismiss
 
+    /// Source for users to check SOS / International Morse code.
+    private static let morseCodeSourceURL = URL(string: "https://en.wikipedia.org/wiki/SOS")!
+
     var body: some View {
         NavigationView {
             VStack(spacing: 32) {
-                Spacer()
                 Image(systemName: isActive ? "flashlight.on.fill" : "flashlight.off.fill")
                     .font(.system(size: 80))
                     .foregroundStyle(isActive ? .yellow : .gray)
@@ -54,14 +58,31 @@ struct DigitalBeaconView: View {
                 .padding(.horizontal, 32)
                 
                 if isActive {
-                    Text("Hold device high and visible. SOS pattern: ••• --- •••")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                        .multilineTextAlignment(.center)
-                        .padding(.horizontal, 32)
+                    VStack(spacing: 6) {
+                        Text("Hold device high and visible. SOS pattern: ••• --- •••")
+                            .font(.caption)
+                            .foregroundStyle(.secondary)
+                            .multilineTextAlignment(.center)
+                        Text("SOS (••• --- •••) is the international Morse code distress signal.")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                            .multilineTextAlignment(.center)
+                    }
+                    .padding(.horizontal, 32)
                 }
-                
-                Spacer()
+
+                Spacer(minLength: 16)
+
+                Link(destination: DigitalBeaconView.morseCodeSourceURL) {
+                    HStack(spacing: 6) {
+                        Image(systemName: "link")
+                            .font(.caption2)
+                        Text("Source: SOS / Morse code (Wikipedia)")
+                            .font(.caption2)
+                    }
+                    .foregroundStyle(.secondary)
+                }
+                .padding(.bottom, 8)
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(isActive ? Color.black : Color(.systemGroupedBackground))
@@ -98,8 +119,8 @@ struct DigitalBeaconView: View {
     }
 
     private func flashSOSPattern() async {
-        // SOS in Morse: ••• (S) --- (O) ••• (S)
-        // Dot = 0.2s, Dash = 0.6s, gap = 0.2s
+        // International Morse code: SOS = ••• (S) --- (O) ••• (S)
+        // Dot = 0.2s, dash = 0.6s, intra-letter gap = 0.2s, letter gap = 0.6s
         
         // S: •••
         await flash(duration: 0.2)

@@ -64,6 +64,10 @@ final class HomeViewModel: ObservableObject {
     }
 
     var isAppleIntelligenceAvailable: Bool { askUseCase.isAppleIntelligenceAvailable() }
+    
+    func prewarmModel() {
+        extendedFeatures?.prewarmModel()
+    }
 
     func load() {
         states = stateUseCase.getAllStates()
@@ -156,7 +160,8 @@ final class HomeViewModel: ObservableObject {
                 for try await chunk in extended.streamAsk(question: question, context: context) {
                     await MainActor.run {
                         fullResponse += chunk
-                        self.streamingResponse = fullResponse
+                        // Strip leading "null" for display so user never sees it during streaming
+                        self.streamingResponse = Self.stripLeadingNullForDisplay(fullResponse)
                     }
                 }
                 await MainActor.run {
@@ -288,6 +293,17 @@ final class HomeViewModel: ObservableObject {
     }
     
     // MARK: - Response Cleaning
+    
+    /// Removes a leading "null" from the string so the streaming UI never shows it.
+    private static func stripLeadingNullForDisplay(_ content: String) -> String {
+        let trimmed = content.trimmingCharacters(in: .whitespacesAndNewlines)
+        let lower = trimmed.lowercased()
+        if lower == "null" { return "" }
+        if lower.hasPrefix("null") {
+            return String(trimmed.dropFirst(4)).trimmingCharacters(in: .whitespacesAndNewlines)
+        }
+        return content
+    }
     
     /// Cleans response content to remove null prefixes, excessive repetition, and other artifacts
     private func cleanResponse(_ content: String) -> String {

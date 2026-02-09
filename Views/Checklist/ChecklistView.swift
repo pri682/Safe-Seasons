@@ -19,6 +19,7 @@ struct ChecklistView: View {
                 VStack(alignment: .leading, spacing: 24) {
                     SectionHeaderView(title: "Preparedness Progress")
                     progressCard
+                    categoryFilter
                     SectionHeaderView(title: "Checklist")
                     checklistList
                 }
@@ -65,7 +66,7 @@ struct ChecklistView: View {
                 Text("\(viewModel.items.filter(\.isCompleted).count) of \(viewModel.items.count) items done")
                     .font(.subheadline.weight(.medium))
                     .foregroundStyle(.primary)
-                Text("Keep building your kit")
+                Text(viewModel.progressSubtitle)
                     .font(.caption)
                     .foregroundStyle(.secondary)
             }
@@ -81,13 +82,60 @@ struct ChecklistView: View {
         .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
     }
 
+    private var categoryFilter: some View {
+        ScrollView(.horizontal, showsIndicators: false) {
+            HStack(spacing: 10) {
+                categoryChip(title: "All", isSelected: viewModel.selectedCategory == nil) {
+                    viewModel.selectedCategory = nil
+                }
+                ForEach(ChecklistItem.ChecklistCategory.allCases, id: \.self) { category in
+                    categoryChip(title: category.rawValue, isSelected: viewModel.selectedCategory == category) {
+                        viewModel.selectedCategory = category
+                    }
+                }
+            }
+            .padding(.horizontal, 2)
+        }
+    }
+
+    private func categoryChip(title: String, isSelected: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.caption.weight(.medium))
+                .foregroundStyle(isSelected ? .white : .primary)
+                .padding(.horizontal, 14)
+                .padding(.vertical, 8)
+                .background(isSelected ? AppColors.mediumPurple : Color(.systemGray5))
+                .clipShape(Capsule())
+        }
+        .buttonStyle(.plain)
+    }
+
     private var checklistList: some View {
-        VStack(spacing: 12) {
-            ForEach(viewModel.items) { item in
-                ChecklistRowView(
-                    item: item,
-                    onToggle: { viewModel.toggleCompletion(item.id) }
-                )
+        VStack(alignment: .leading, spacing: 16) {
+            if viewModel.selectedCategory == nil {
+                ForEach(viewModel.itemsGroupedByCategory, id: \.0.rawValue) { category, items in
+                    VStack(alignment: .leading, spacing: 10) {
+                        Text(category.rawValue)
+                            .font(.subheadline.weight(.semibold))
+                            .foregroundStyle(.secondary)
+                        VStack(spacing: 12) {
+                            ForEach(items) { item in
+                                ChecklistRowView(
+                                    item: item,
+                                    onToggle: { viewModel.toggleCompletion(item.id) }
+                                )
+                            }
+                        }
+                    }
+                }
+            } else {
+                ForEach(viewModel.displayedItems) { item in
+                    ChecklistRowView(
+                        item: item,
+                        onToggle: { viewModel.toggleCompletion(item.id) }
+                    )
+                }
             }
         }
     }

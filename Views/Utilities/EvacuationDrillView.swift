@@ -2,16 +2,23 @@
 //  EvacuationDrillView.swift
 //  SafeSeasons
 //
-//  Interactive 2-minute evacuation drill with checklist.
+//  Interactive 2-minute evacuation drill with scenario-based visuals (e.g. tsunami water receding).
 //
 
 import SwiftUI
 
+enum DrillScenario: String, CaseIterable {
+    case tsunami = "Tsunami"
+    case fire = "Fire"
+    case general = "General"
+}
+
 struct EvacuationDrillView: View {
     @State private var isRunning = false
-    @State private var timeRemaining = 120 // 2 minutes in seconds
+    @State private var timeRemaining = 120
     @State private var checkedItems: Set<String> = []
     @State private var timer: Timer?
+    @State private var selectedScenario: DrillScenario = .general
     @Environment(\.dismiss) private var dismiss
 
     private let drillItems = [
@@ -28,17 +35,16 @@ struct EvacuationDrillView: View {
             ScrollView {
                 VStack(spacing: 24) {
                     if !isRunning && timeRemaining == 120 {
-                        // Start screen
+                        // Start screen: scenario picker + interactive content
                         VStack(spacing: 20) {
-                            Image(systemName: "figure.run")
-                                .font(.system(size: 60))
-                                .foregroundStyle(AppColors.ctaGreen)
                             Text("2-Minute Evacuation Drill")
                                 .font(.title.weight(.bold))
-                            Text("Practice your evacuation routine. Check off items as you gather them.")
+                            Text("Pick a scenario, learn the signs, then practice.")
                                 .font(.subheadline)
                                 .foregroundStyle(.secondary)
                                 .multilineTextAlignment(.center)
+                            scenarioPicker
+                            scenarioVisual
                             Button {
                                 startDrill()
                             } label: {
@@ -59,6 +65,11 @@ struct EvacuationDrillView: View {
                     } else if isRunning {
                         // Active drill
                         VStack(spacing: 24) {
+                            if selectedScenario != .general {
+                                Text(selectedScenario == .tsunami ? "Tsunami drill: get to high ground" : "Fire drill: get out, stay out")
+                                    .font(.caption.weight(.medium))
+                                    .foregroundStyle(.secondary)
+                            }
                             // Timer
                             VStack(spacing: 8) {
                                 Text("Time Remaining")
@@ -126,7 +137,6 @@ struct EvacuationDrillView: View {
                         }
                         .padding()
                     } else {
-                        // Completed
                         VStack(spacing: 20) {
                             Image(systemName: checkedItems.count == drillItems.count ? "checkmark.circle.fill" : "clock.fill")
                                 .font(.system(size: 60))
@@ -209,5 +219,131 @@ struct EvacuationDrillView: View {
         let mins = seconds / 60
         let secs = seconds % 60
         return String(format: "%d:%02d", mins, secs)
+    }
+
+    private var scenarioPicker: some View {
+        HStack(spacing: 10) {
+            ForEach(DrillScenario.allCases, id: \.self) { scenario in
+                Button {
+                    withAnimation(.easeInOut(duration: 0.25)) { selectedScenario = scenario }
+                } label: {
+                    Text(scenario.rawValue)
+                        .font(.subheadline.weight(.medium))
+                        .foregroundStyle(selectedScenario == scenario ? .white : .primary)
+                        .padding(.horizontal, 16)
+                        .padding(.vertical, 10)
+                        .background(selectedScenario == scenario ? AppColors.mediumPurple : Color(.systemGray5))
+                        .clipShape(RoundedRectangle(cornerRadius: 12))
+                }
+                .buttonStyle(.plain)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var scenarioVisual: some View {
+        switch selectedScenario {
+        case .tsunami:
+            TsunamiRecedingView()
+        case .fire:
+            FireScenarioView()
+        case .general:
+            GeneralDrillPlaceholderView()
+        }
+    }
+}
+
+// MARK: - Tsunami: water receding animation (warning sign before a tsunami)
+struct TsunamiRecedingView: View {
+    @State private var waterReceded = false
+
+    var body: some View {
+        VStack(spacing: 12) {
+            ZStack(alignment: .bottom) {
+                // Beach / exposed seabed (visible when water recedes)
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color(hex: 0xE8DCC4), Color(hex: 0xD4C4A0)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(height: 140)
+                // Ocean water – recedes (height shrinks and offset pulls it “back”)
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(
+                        LinearGradient(
+                            colors: [Color(hex: 0x5AA0E8), Color(hex: 0x2E6BB8)],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                    )
+                    .frame(height: waterReceded ? 18 : 130)
+                    .offset(y: waterReceded ? 50 : 0)
+                    .animation(.easeInOut(duration: 2.5).repeatForever(autoreverses: true), value: waterReceded)
+            }
+            .frame(height: 140)
+            .clipped()
+            .onAppear { waterReceded = true }
+            Text("Before a tsunami, the ocean often pulls back. If you see water receding quickly, move to high ground immediately.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .padding()
+        .background(AppColors.cardBg)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+    }
+}
+
+// MARK: - Fire scenario tip
+struct FireScenarioView: View {
+    @State private var flicker = false
+
+    var body: some View {
+        VStack(spacing: 12) {
+            HStack(spacing: 16) {
+                Image(systemName: "flame.fill")
+                    .font(.system(size: 44))
+                    .foregroundStyle(.orange)
+                    .opacity(flicker ? 1 : 0.85)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("Get out, stay out.")
+                        .font(.subheadline.weight(.semibold))
+                    Text("If you smell smoke or see flames, leave immediately. Don’t go back for belongings.")
+                        .font(.caption)
+                        .foregroundStyle(.secondary)
+                }
+                Spacer()
+            }
+            .padding()
+            .onAppear {
+                withAnimation(.easeInOut(duration: 0.6).repeatForever(autoreverses: true)) { flicker = true }
+            }
+        }
+        .background(AppColors.cardBg)
+        .clipShape(RoundedRectangle(cornerRadius: 20))
+        .shadow(color: .black.opacity(0.06), radius: 8, x: 0, y: 2)
+    }
+}
+
+// MARK: - General drill placeholder
+struct GeneralDrillPlaceholderView: View {
+    var body: some View {
+        VStack(spacing: 12) {
+            Image(systemName: "figure.run")
+                .font(.system(size: 50))
+                .foregroundStyle(AppColors.ctaGreen)
+            Text("Practice your go-bag and evacuation route.")
+                .font(.caption)
+                .foregroundStyle(.secondary)
+                .multilineTextAlignment(.center)
+        }
+        .frame(maxWidth: .infinity)
+        .padding(.vertical, 20)
+        .background(AppColors.softGreen.opacity(0.3))
+        .clipShape(RoundedRectangle(cornerRadius: 20))
     }
 }
