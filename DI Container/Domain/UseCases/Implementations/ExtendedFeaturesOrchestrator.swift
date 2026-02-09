@@ -59,4 +59,9 @@ final class ExtendedFeaturesOrchestrator: @unchecked Sendable {
     var isAppleIntelligenceAvailable: Bool {
         askUseCase.isAppleIntelligenceAvailable()
     }
+    
+    /// Prewarm the Foundation Model so the first user request is faster (Code-Along pattern).
+    func prewarmModel() {
+        askUseCase.prewarmModel()
+    }
 }

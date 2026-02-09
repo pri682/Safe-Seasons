@@ -25,7 +25,7 @@ struct ChecklistItem: Identifiable, Equatable {
         self.hasPhoto = hasPhoto
     }
     
-    enum ChecklistCategory: String {
+    enum ChecklistCategory: String, CaseIterable {
         case basicSupplies = "Basic Supplies"
         case medical = "Medical"
         case documents = "Documents"
@@ -37,5 +37,14 @@ struct ChecklistItem: Identifiable, Equatable {
         case high = "High"
         case medium = "Medium"
         case low = "Low"
+
+        var sortOrder: Int {
+            switch self {
+            case .critical: return 0
+            case .high: return 1
+            case .medium: return 2
+            case .low: return 3
+            }
+        }
     }
 }

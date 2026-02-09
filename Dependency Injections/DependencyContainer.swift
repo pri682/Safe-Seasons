@@ -69,7 +69,7 @@ final class DependencyContainer {
         var fmExtended: ExtendedAskSafeSeasonsUseCaseProtocol? = nil
         #if canImport(FoundationModels)
         if #available(iOS 26.0, *) {
-            fmExtended = FoundationModelsExtendedFeatures(offlineAIUseCase: offlineAIUseCase)
+            fmExtended = FoundationModelsExtendedFeatures()
         }
         #endif
         
@@ -96,7 +96,7 @@ final class DependencyContainer {
         var fmAsk: AskSafeSeasonsUseCaseProtocol? = nil
         #if canImport(FoundationModels)
         if #available(iOS 26.0, *) {
-            fmAsk = FoundationModelsAskUseCase(offlineAIUseCase: offlineAIUseCase)
+            fmAsk = FoundationModelsAskUseCase()
         }
         #endif
         askUseCase = AskSafeSeasonsOrchestrator(preferred: fmAsk, fallback: ruleBasedAsk)

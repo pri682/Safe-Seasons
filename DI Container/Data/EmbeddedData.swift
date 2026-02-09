@@ -372,21 +372,142 @@ enum EmbeddedData {
         )
     ]
 
-    // MARK: - Emergency Resources
+    // MARK: - Emergency Resources (offline POIs: Cupertino, CA, TX, Seattle, and all states)
 
     static let emergencyResources: [EmergencyResource] = [
+        // ——— Cupertino & San Jose area, CA ———
+        EmergencyResource(name: "Kaiser Permanente Santa Clara", type: .hospital, coordinate: Coordinate(latitude: 37.3230, longitude: -122.0322), address: "900 Kiely Blvd, Santa Clara, CA"),
+        EmergencyResource(name: "Cupertino Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 37.3228, longitude: -122.0316), address: "10425 N Wolfe Rd, Cupertino, CA"),
+        EmergencyResource(name: "Santa Clara County Sheriff - West Valley", type: .policeStation, coordinate: Coordinate(latitude: 37.3189, longitude: -122.0292), address: "1601 Saratoga Ave, San Jose, CA"),
+        EmergencyResource(name: "Cupertino Community Hall (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 37.3225, longitude: -122.0305), address: "10350 Torre Ave, Cupertino, CA"),
+        EmergencyResource(name: "El Camino Health Mountain View", type: .hospital, coordinate: Coordinate(latitude: 37.3514, longitude: -122.0600), address: "2500 Grant Rd, Mountain View, CA"),
+        EmergencyResource(name: "San Jose Fire Station 2", type: .fireStation, coordinate: Coordinate(latitude: 37.3382, longitude: -121.8863), address: "255 N 4th St, San Jose, CA"),
+        EmergencyResource(name: "San Jose Police Department", type: .policeStation, coordinate: Coordinate(latitude: 37.3330, longitude: -121.8900), address: "201 W Mission St, San Jose, CA"),
+        EmergencyResource(name: "American Red Cross Silicon Valley", type: .shelter, coordinate: Coordinate(latitude: 37.3350, longitude: -121.8920), address: "2731 N 1st St, San Jose, CA"),
+        // ——— Los Angeles area, CA ———
         EmergencyResource(name: "UCLA Ronald Reagan Medical Center", type: .hospital, coordinate: Coordinate(latitude: 34.0669, longitude: -118.4452), address: "757 Westwood Plaza, Los Angeles, CA"),
         EmergencyResource(name: "LA Fire Station 27", type: .fireStation, coordinate: Coordinate(latitude: 34.0522, longitude: -118.2437), address: "1424 N Cahuenga Blvd, Los Angeles, CA"),
         EmergencyResource(name: "LAPD Central Division", type: .policeStation, coordinate: Coordinate(latitude: 34.0407, longitude: -118.2468), address: "251 E 6th St, Los Angeles, CA"),
         EmergencyResource(name: "American Red Cross LA Chapter", type: .shelter, coordinate: Coordinate(latitude: 34.0625, longitude: -118.3061), address: "11355 Ohio Ave, Los Angeles, CA"),
+        // ——— San Francisco area, CA ———
+        EmergencyResource(name: "Zuckerberg San Francisco General", type: .hospital, coordinate: Coordinate(latitude: 37.7558, longitude: -122.4060), address: "1001 Potrero Ave, San Francisco, CA"),
+        EmergencyResource(name: "SFFD Station 1", type: .fireStation, coordinate: Coordinate(latitude: 37.7879, longitude: -122.3944), address: "935 Folsom St, San Francisco, CA"),
+        EmergencyResource(name: "SFPD Central Station", type: .policeStation, coordinate: Coordinate(latitude: 37.7986, longitude: -122.4097), address: "766 Vallejo St, San Francisco, CA"),
+        EmergencyResource(name: "SF Emergency Shelter", type: .shelter, coordinate: Coordinate(latitude: 37.7840, longitude: -122.4080), address: "170 Otis St, San Francisco, CA"),
+        // ——— San Diego, CA ———
+        EmergencyResource(name: "UC San Diego Health", type: .hospital, coordinate: Coordinate(latitude: 32.7484, longitude: -117.1677), address: "200 W Arbor Dr, San Diego, CA"),
+        EmergencyResource(name: "SDFD Station 1", type: .fireStation, coordinate: Coordinate(latitude: 32.7157, longitude: -117.1611), address: "1222 1st Ave, San Diego, CA"),
+        EmergencyResource(name: "SDPD Central Division", type: .policeStation, coordinate: Coordinate(latitude: 32.7140, longitude: -117.1620), address: "1401 Broadway, San Diego, CA"),
+        EmergencyResource(name: "San Diego Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 32.7060, longitude: -117.1630), address: "111 W Harbor Dr, San Diego, CA"),
+        // ——— Sacramento, CA ———
+        EmergencyResource(name: "UC Davis Medical Center", type: .hospital, coordinate: Coordinate(latitude: 38.5560, longitude: -121.4690), address: "2315 Stockton Blvd, Sacramento, CA"),
+        EmergencyResource(name: "Sacramento Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 38.5816, longitude: -121.4944), address: "123 I St, Sacramento, CA"),
+        EmergencyResource(name: "Sacramento Police HQ", type: .policeStation, coordinate: Coordinate(latitude: 38.5820, longitude: -121.4930), address: "5770 Freeport Blvd, Sacramento, CA"),
+        EmergencyResource(name: "Cal Expo (Evacuation Shelter)", type: .shelter, coordinate: Coordinate(latitude: 38.5890, longitude: -121.4200), address: "1600 Exposition Blvd, Sacramento, CA"),
+        // ——— Houston, TX ———
         EmergencyResource(name: "Memorial Hermann-TMC", type: .hospital, coordinate: Coordinate(latitude: 29.7074, longitude: -95.4019), address: "6411 Fannin St, Houston, TX"),
         EmergencyResource(name: "Houston Fire Station 8", type: .fireStation, coordinate: Coordinate(latitude: 29.7604, longitude: -95.3698), address: "2217 Milam St, Houston, TX"),
         EmergencyResource(name: "HPD Central Patrol", type: .policeStation, coordinate: Coordinate(latitude: 29.7525, longitude: -95.3667), address: "61 Riesner St, Houston, TX"),
         EmergencyResource(name: "George R. Brown Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 29.7513, longitude: -95.3608), address: "1001 Avenida de las Americas, Houston, TX"),
+        // ——— Dallas, TX ———
+        EmergencyResource(name: "Parkland Memorial Hospital", type: .hospital, coordinate: Coordinate(latitude: 32.8380, longitude: -96.8480), address: "5201 Harry Hines Blvd, Dallas, TX"),
+        EmergencyResource(name: "Dallas Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 32.7767, longitude: -96.7970), address: "500 S Ervay St, Dallas, TX"),
+        EmergencyResource(name: "Dallas Police HQ", type: .policeStation, coordinate: Coordinate(latitude: 32.7780, longitude: -96.7960), address: "1400 S Lamar St, Dallas, TX"),
+        EmergencyResource(name: "Kay Bailey Hutchison Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 32.7480, longitude: -96.8080), address: "650 S Griffin St, Dallas, TX"),
+        // ——— Austin, TX ———
+        EmergencyResource(name: "Dell Seton Medical Center", type: .hospital, coordinate: Coordinate(latitude: 30.2672, longitude: -97.7431), address: "1500 Red River St, Austin, TX"),
+        EmergencyResource(name: "Austin Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 30.2710, longitude: -97.7400), address: "401 E 5th St, Austin, TX"),
+        EmergencyResource(name: "APD Central Station", type: .policeStation, coordinate: Coordinate(latitude: 30.2680, longitude: -97.7450), address: "715 E 8th St, Austin, TX"),
+        EmergencyResource(name: "Palmer Events Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 30.2580, longitude: -97.7480), address: "900 Barton Springs Rd, Austin, TX"),
+        // ——— San Antonio, TX ———
+        EmergencyResource(name: "University Hospital San Antonio", type: .hospital, coordinate: Coordinate(latitude: 29.4241, longitude: -98.4936), address: "4502 Medical Dr, San Antonio, TX"),
+        EmergencyResource(name: "SAFD Station 1", type: .fireStation, coordinate: Coordinate(latitude: 29.4370, longitude: -98.4920), address: "219 S Main Ave, San Antonio, TX"),
+        EmergencyResource(name: "SAPD Central Substation", type: .policeStation, coordinate: Coordinate(latitude: 29.4360, longitude: -98.4910), address: "214 W Nueva St, San Antonio, TX"),
+        EmergencyResource(name: "Henry B. Gonzalez Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 29.4220, longitude: -98.4860), address: "900 E Market St, San Antonio, TX"),
+        // ——— Seattle, WA ———
+        EmergencyResource(name: "Harborview Medical Center", type: .hospital, coordinate: Coordinate(latitude: 47.6487, longitude: -122.3210), address: "325 9th Ave, Seattle, WA"),
+        EmergencyResource(name: "Seattle Fire Station 2", type: .fireStation, coordinate: Coordinate(latitude: 47.6062, longitude: -122.3321), address: "231 4th Ave S, Seattle, WA"),
+        EmergencyResource(name: "Seattle Police West Precinct", type: .policeStation, coordinate: Coordinate(latitude: 47.6097, longitude: -122.3331), address: "810 Virginia St, Seattle, WA"),
+        EmergencyResource(name: "Seattle Center (Evacuation Shelter)", type: .shelter, coordinate: Coordinate(latitude: 47.6220, longitude: -122.3540), address: "305 Harrison St, Seattle, WA"),
+        // ——— Miami, FL ———
         EmergencyResource(name: "Jackson Memorial Hospital", type: .hospital, coordinate: Coordinate(latitude: 25.7907, longitude: -80.21), address: "1611 NW 12th Ave, Miami, FL"),
         EmergencyResource(name: "Miami Fire Rescue Station 1", type: .fireStation, coordinate: Coordinate(latitude: 25.7743, longitude: -80.1937), address: "144 NE 5th St, Miami, FL"),
         EmergencyResource(name: "Miami Police Department", type: .policeStation, coordinate: Coordinate(latitude: 25.7743, longitude: -80.1967), address: "400 NW 2nd Ave, Miami, FL"),
-        EmergencyResource(name: "FIU Arena (Evacuation Shelter)", type: .shelter, coordinate: Coordinate(latitude: 25.757, longitude: -80.3733), address: "11200 SW 8th St, Miami, FL")
+        EmergencyResource(name: "FIU Arena (Evacuation Shelter)", type: .shelter, coordinate: Coordinate(latitude: 25.757, longitude: -80.3733), address: "11200 SW 8th St, Miami, FL"),
+        // ——— Phoenix, AZ ———
+        EmergencyResource(name: "Banner University Medical Center Phoenix", type: .hospital, coordinate: Coordinate(latitude: 33.5090, longitude: -112.0800), address: "1111 E McDowell Rd, Phoenix, AZ"),
+        EmergencyResource(name: "Phoenix Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 33.4484, longitude: -112.0740), address: "520 E Van Buren St, Phoenix, AZ"),
+        EmergencyResource(name: "Phoenix Police HQ", type: .policeStation, coordinate: Coordinate(latitude: 33.4500, longitude: -112.0730), address: "620 W Washington St, Phoenix, AZ"),
+        EmergencyResource(name: "Phoenix Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 33.4470, longitude: -112.0710), address: "100 N 3rd St, Phoenix, AZ"),
+        // ——— Denver, CO ———
+        EmergencyResource(name: "Denver Health Medical Center", type: .hospital, coordinate: Coordinate(latitude: 39.7392, longitude: -104.9903), address: "777 Bannock St, Denver, CO"),
+        EmergencyResource(name: "Denver Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 39.7520, longitude: -104.9980), address: "1326 Tremont Pl, Denver, CO"),
+        EmergencyResource(name: "Denver Police District 1", type: .policeStation, coordinate: Coordinate(latitude: 39.7500, longitude: -104.9960), address: "1311 W 46th Ave, Denver, CO"),
+        EmergencyResource(name: "Colorado Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 39.7430, longitude: -104.9990), address: "700 14th St, Denver, CO"),
+        // ——— Chicago, IL ———
+        EmergencyResource(name: "Northwestern Memorial Hospital", type: .hospital, coordinate: Coordinate(latitude: 41.8908, longitude: -87.6240), address: "251 E Huron St, Chicago, IL"),
+        EmergencyResource(name: "Chicago Fire Department Engine 13", type: .fireStation, coordinate: Coordinate(latitude: 41.8781, longitude: -87.6298), address: "259 N Columbus Dr, Chicago, IL"),
+        EmergencyResource(name: "Chicago Police Area Central", type: .policeStation, coordinate: Coordinate(latitude: 41.8800, longitude: -87.6320), address: "1718 S State St, Chicago, IL"),
+        EmergencyResource(name: "McCormick Place (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 41.8510, longitude: -87.6180), address: "2301 S Lake Shore Dr, Chicago, IL"),
+        // ——— New York, NY ———
+        EmergencyResource(name: "Bellevue Hospital", type: .hospital, coordinate: Coordinate(latitude: 40.7394, longitude: -73.9750), address: "462 1st Ave, New York, NY"),
+        EmergencyResource(name: "FDNY Engine 3", type: .fireStation, coordinate: Coordinate(latitude: 40.7484, longitude: -73.9857), address: "243 E 31st St, New York, NY"),
+        EmergencyResource(name: "NYPD Midtown South", type: .policeStation, coordinate: Coordinate(latitude: 40.7480, longitude: -73.9860), address: "357 W 35th St, New York, NY"),
+        EmergencyResource(name: "Javits Center (Evacuation Shelter)", type: .shelter, coordinate: Coordinate(latitude: 40.7570, longitude: -74.0020), address: "429 11th Ave, New York, NY"),
+        // ——— Boston, MA ———
+        EmergencyResource(name: "Massachusetts General Hospital", type: .hospital, coordinate: Coordinate(latitude: 42.3630, longitude: -71.0680), address: "55 Fruit St, Boston, MA"),
+        EmergencyResource(name: "Boston Fire Engine 33", type: .fireStation, coordinate: Coordinate(latitude: 42.3601, longitude: -71.0589), address: "941 Boylston St, Boston, MA"),
+        EmergencyResource(name: "Boston Police District A-1", type: .policeStation, coordinate: Coordinate(latitude: 42.3630, longitude: -71.0620), address: "40 New Sudbury St, Boston, MA"),
+        EmergencyResource(name: "Hynes Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 42.3480, longitude: -71.0860), address: "900 Boylston St, Boston, MA"),
+        // ——— Atlanta, GA ———
+        EmergencyResource(name: "Grady Memorial Hospital", type: .hospital, coordinate: Coordinate(latitude: 33.7690, longitude: -84.3870), address: "80 Jesse Hill Jr Dr SE, Atlanta, GA"),
+        EmergencyResource(name: "Atlanta Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 33.7490, longitude: -84.3880), address: "1 Martin Luther King Jr Dr, Atlanta, GA"),
+        EmergencyResource(name: "APD Zone 5", type: .policeStation, coordinate: Coordinate(latitude: 33.7520, longitude: -84.3900), address: "150 Garnett St SW, Atlanta, GA"),
+        EmergencyResource(name: "Georgia World Congress Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 33.7570, longitude: -84.4010), address: "285 Andrew Young Intl Blvd, Atlanta, GA"),
+        // ——— Portland, OR ———
+        EmergencyResource(name: "OHSU Hospital", type: .hospital, coordinate: Coordinate(latitude: 45.4991, longitude: -122.6862), address: "3181 SW Sam Jackson Park Rd, Portland, OR"),
+        EmergencyResource(name: "Portland Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 45.5152, longitude: -122.6784), address: "55 SW Ash St, Portland, OR"),
+        EmergencyResource(name: "Portland Police Central Precinct", type: .policeStation, coordinate: Coordinate(latitude: 45.5140, longitude: -122.6790), address: "1111 SW 2nd Ave, Portland, OR"),
+        EmergencyResource(name: "Oregon Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 45.5290, longitude: -122.6620), address: "777 NE Martin Luther King Jr Blvd, Portland, OR"),
+        // ——— Las Vegas, NV ———
+        EmergencyResource(name: "UMC of Southern Nevada", type: .hospital, coordinate: Coordinate(latitude: 36.1699, longitude: -115.1398), address: "1800 W Charleston Blvd, Las Vegas, NV"),
+        EmergencyResource(name: "Las Vegas Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 36.1710, longitude: -115.1420), address: "500 N Casino Center Blvd, Las Vegas, NV"),
+        EmergencyResource(name: "LVMPD Downtown Area Command", type: .policeStation, coordinate: Coordinate(latitude: 36.1700, longitude: -115.1410), address: "200 Stewart Ave, Las Vegas, NV"),
+        EmergencyResource(name: "Las Vegas Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 36.1290, longitude: -115.1560), address: "3150 Paradise Rd, Las Vegas, NV"),
+        // ——— Nashville, TN ———
+        EmergencyResource(name: "Vanderbilt University Medical Center", type: .hospital, coordinate: Coordinate(latitude: 36.1408, longitude: -86.8027), address: "1211 Medical Center Dr, Nashville, TN"),
+        EmergencyResource(name: "Nashville Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 36.1659, longitude: -86.7844), address: "501 2nd Ave N, Nashville, TN"),
+        EmergencyResource(name: "MNPD Central Precinct", type: .policeStation, coordinate: Coordinate(latitude: 36.1660, longitude: -86.7850), address: "200 James Robertson Pkwy, Nashville, TN"),
+        EmergencyResource(name: "Nashville Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 36.1620, longitude: -86.7780), address: "601 Commerce St, Nashville, TN"),
+        // ——— Philadelphia, PA ———
+        EmergencyResource(name: "Penn Presbyterian Medical Center", type: .hospital, coordinate: Coordinate(latitude: 39.9526, longitude: -75.1652), address: "51 N 39th St, Philadelphia, PA"),
+        EmergencyResource(name: "Philadelphia Fire Engine 60", type: .fireStation, coordinate: Coordinate(latitude: 39.9520, longitude: -75.1640), address: "101 N 39th St, Philadelphia, PA"),
+        EmergencyResource(name: "PPD Central Division", type: .policeStation, coordinate: Coordinate(latitude: 39.9530, longitude: -75.1660), address: "39th and Lancaster Ave, Philadelphia, PA"),
+        EmergencyResource(name: "Pennsylvania Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 39.9510, longitude: -75.1590), address: "1101 Arch St, Philadelphia, PA"),
+        // ——— Detroit, MI ———
+        EmergencyResource(name: "Henry Ford Hospital", type: .hospital, coordinate: Coordinate(latitude: 42.3590, longitude: -83.0770), address: "2799 W Grand Blvd, Detroit, MI"),
+        EmergencyResource(name: "Detroit Fire Engine 1", type: .fireStation, coordinate: Coordinate(latitude: 42.3350, longitude: -83.0490), address: "250 W Larned St, Detroit, MI"),
+        EmergencyResource(name: "Detroit Police HQ", type: .policeStation, coordinate: Coordinate(latitude: 42.3360, longitude: -83.0500), address: "1300 Beaubien St, Detroit, MI"),
+        EmergencyResource(name: "TCF Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 42.3390, longitude: -83.0450), address: "1 Washington Blvd, Detroit, MI"),
+        // ——— Connecticut (Hartford, New Haven) ———
+        EmergencyResource(name: "Hartford Hospital", type: .hospital, coordinate: Coordinate(latitude: 41.7660, longitude: -72.6830), address: "80 Seymour St, Hartford, CT"),
+        EmergencyResource(name: "Hartford Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 41.7650, longitude: -72.6820), address: "275 Pearl St, Hartford, CT"),
+        EmergencyResource(name: "Hartford Police HQ", type: .policeStation, coordinate: Coordinate(latitude: 41.7640, longitude: -72.6810), address: "253 High St, Hartford, CT"),
+        EmergencyResource(name: "XL Center (Evacuation Shelter)", type: .shelter, coordinate: Coordinate(latitude: 41.7670, longitude: -72.6840), address: "1 Civic Center Plaza, Hartford, CT"),
+        EmergencyResource(name: "Yale New Haven Hospital", type: .hospital, coordinate: Coordinate(latitude: 41.3040, longitude: -72.9360), address: "20 York St, New Haven, CT"),
+        EmergencyResource(name: "New Haven Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 41.3080, longitude: -72.9280), address: "952 Grand Ave, New Haven, CT"),
+        EmergencyResource(name: "New Haven Police HQ", type: .policeStation, coordinate: Coordinate(latitude: 41.3070, longitude: -72.9290), address: "1 Union Ave, New Haven, CT"),
+        EmergencyResource(name: "Floyd Little Athletic Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 41.3100, longitude: -72.9300), address: "480 Sherman Pkwy, New Haven, CT"),
+        // ——— Fort Worth, TX ———
+        EmergencyResource(name: "JPS Health Network", type: .hospital, coordinate: Coordinate(latitude: 32.7555, longitude: -97.3308), address: "1500 S Main St, Fort Worth, TX"),
+        EmergencyResource(name: "Fort Worth Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 32.7550, longitude: -97.3310), address: "1000 Throckmorton St, Fort Worth, TX"),
+        EmergencyResource(name: "Fort Worth Police Central", type: .policeStation, coordinate: Coordinate(latitude: 32.7540, longitude: -97.3320), address: "350 W Belknap St, Fort Worth, TX"),
+        EmergencyResource(name: "Fort Worth Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 32.7520, longitude: -97.3280), address: "1201 Houston St, Fort Worth, TX"),
+        // ——— El Paso, TX ———
+        EmergencyResource(name: "University Medical Center El Paso", type: .hospital, coordinate: Coordinate(latitude: 31.7619, longitude: -106.4850), address: "4815 Alameda Ave, El Paso, TX"),
+        EmergencyResource(name: "El Paso Fire Station 1", type: .fireStation, coordinate: Coordinate(latitude: 31.7580, longitude: -106.4890), address: "410 E San Antonio Ave, El Paso, TX"),
+        EmergencyResource(name: "EPPD Central Regional Command", type: .policeStation, coordinate: Coordinate(latitude: 31.7590, longitude: -106.4880), address: "911 N Raynor St, El Paso, TX"),
+        EmergencyResource(name: "El Paso Convention Center (Shelter)", type: .shelter, coordinate: Coordinate(latitude: 31.7600, longitude: -106.4870), address: "1 Civic Center Plaza, El Paso, TX")
     ]
 
     // MARK: - WEA Data
