@@ -6,18 +6,18 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>Priyanka.SafeSeasons</string>
+			<string>Priyanka.DisasterReady</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>safeseasons</string>
+				<string>disasterready</string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
 		</dict>
 	</array>
 	<key>NSLocationWhenInUseUsageDescription</key>
-	<string>SafeSeasons needs your location to show coordinates and compass heading for emergency situations.</string>
+	<string>DisasterReady needs your location to show coordinates and compass heading for emergency situations.</string>
 	<key>NSCameraUsageDescription</key>
-	<string>SafeSeasons needs camera access to use the flashlight for the SOS beacon feature.</string>
+	<string>DisasterReady needs camera access to use the flashlight for the SOS beacon feature.</string>
 </dict>
 </plist>
