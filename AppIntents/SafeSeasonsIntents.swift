@@ -1,6 +1,6 @@
 //
-//  SafeSeasonsIntents.swift
-//  SafeSeasons
+//  DisasterReadyIntents.swift
+//  DisasterReady
 //
 //  App Intents for Siri Shortcuts: Call 911, Open Map, Show Checklist.
 //
@@ -25,12 +25,12 @@ struct Call911Intent: AppIntent {
 
 struct OpenEmergencyMapIntent: AppIntent {
     static var title: LocalizedStringResource { "Open Emergency Map" }
-    static var description: IntentDescription { IntentDescription("Open SafeSeasons and show the emergency resources map.") }
+    static var description: IntentDescription { IntentDescription("Open DisasterReady and show the emergency resources map.") }
     static var openAppWhenRun: Bool { true }
 
     @MainActor
     func perform() async throws -> some IntentResult {
-        if let url = URL(string: "safeseasons://map") {
+        if let url = URL(string: "disasterready://map") {
             await UIApplication.shared.open(url)
         }
         return .result()
@@ -39,19 +39,19 @@ struct OpenEmergencyMapIntent: AppIntent {
 
 struct ShowChecklistIntent: AppIntent {
     static var title: LocalizedStringResource { "Show Preparedness Checklist" }
-    static var description: IntentDescription { IntentDescription("Open SafeSeasons and show your emergency preparedness checklist.") }
+    static var description: IntentDescription { IntentDescription("Open DisasterReady and show your emergency preparedness checklist.") }
     static var openAppWhenRun: Bool { true }
 
     @MainActor
     func perform() async throws -> some IntentResult {
-        if let url = URL(string: "safeseasons://checklist") {
+        if let url = URL(string: "disasterready://checklist") {
             await UIApplication.shared.open(url)
         }
         return .result()
     }
 }
 
-struct SafeSeasonsShortcuts: AppShortcutsProvider {
+struct DisasterReadyShortcuts: AppShortcutsProvider {
     @AppShortcutsBuilder
     static var appShortcuts: [AppShortcut] {
         AppShortcut(
