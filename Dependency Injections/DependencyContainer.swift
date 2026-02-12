@@ -1,6 +1,6 @@
 //
 //  DependencyContainer.swift
-//  SafeSeasons
+//  DisasterReady
 //
 //  Composition root (DIP). Creates concretions; all other layers depend on protocols.
 //
@@ -29,7 +29,7 @@ final class DependencyContainer {
     let weaUseCase: WEAUseCaseProtocol
     let emergencyResourceUseCase: EmergencyResourceUseCaseProtocol
     let offlineAIUseCase: OfflineAIUseCaseProtocol
-    let askUseCase: AskSafeSeasonsUseCaseProtocol
+    let askUseCase: AskDisasterReadyUseCaseProtocol
     let weatherAlertUseCase: WeatherAlertUseCaseProtocol
     
     // Extended Foundation Models features
@@ -63,43 +63,32 @@ final class DependencyContainer {
         let offlineAIRuleEngine = OfflineAIRuleEngine()
         offlineAIUseCase = OfflineAIUseCase(engine: offlineAIRuleEngine)
 
-        // Extended features setup
+        // Start with rule-based fallbacks only so the app launches instantly.
+        // FoundationModels classes (with @Generable metadata) can block the main thread
+        // during framework initialization on iOS 26 beta, causing a white screen.
         let ruleBasedExtended = RuleBasedExtendedFeatures(disasterUseCase: disasterUseCase, offlineAIUseCase: offlineAIUseCase)
         
-        var fmExtended: ExtendedAskSafeSeasonsUseCaseProtocol? = nil
-        #if canImport(FoundationModels)
-        if #available(iOS 26.0, *) {
-            fmExtended = FoundationModelsExtendedFeatures()
-        }
-        #endif
-        
-        // Create orchestrator for extended features
+        // Create orchestrator with fallbacks only (no FM at init)
         extendedFeatures = ExtendedFeaturesOrchestrator(
-            preferredAsk: fmExtended,
+            preferredAsk: nil,
             fallbackAsk: ruleBasedExtended,
-            preferredGuided: fmExtended as? GuidedGenerationUseCaseProtocol,
+            preferredGuided: nil,
             fallbackGuided: ruleBasedExtended,
-            preferredTagging: fmExtended as? ContentTaggingUseCaseProtocol,
+            preferredTagging: nil,
             fallbackTagging: ruleBasedExtended,
-            preferredSummarization: fmExtended as? SummarizationUseCaseProtocol,
+            preferredSummarization: nil,
             fallbackSummarization: ruleBasedExtended,
-            preferredPrioritization: fmExtended as? EmergencyPrioritizationUseCaseProtocol,
+            preferredPrioritization: nil,
             fallbackPrioritization: ruleBasedExtended,
-            preferredParsing: fmExtended as? QueryParsingUseCaseProtocol,
+            preferredParsing: nil,
             fallbackParsing: ruleBasedExtended,
-            preferredConversation: fmExtended as? ConversationSessionProtocol,
+            preferredConversation: nil,
             fallbackConversation: ruleBasedExtended
         )
         
-        // Legacy ask use case (for backward compatibility)
+        // Legacy ask use case (rule-based only at init)
         let ruleBasedAsk = RuleBasedAskUseCase(disasterUseCase: disasterUseCase, offlineAIUseCase: offlineAIUseCase)
-        var fmAsk: AskSafeSeasonsUseCaseProtocol? = nil
-        #if canImport(FoundationModels)
-        if #available(iOS 26.0, *) {
-            fmAsk = FoundationModelsAskUseCase()
-        }
-        #endif
-        askUseCase = AskSafeSeasonsOrchestrator(preferred: fmAsk, fallback: ruleBasedAsk)
+        askUseCase = AskDisasterReadyOrchestrator(preferred: nil, fallback: ruleBasedAsk)
 
         homeViewModel = HomeViewModel(
             stateUseCase: stateRiskUseCase,
@@ -112,6 +101,36 @@ final class DependencyContainer {
         checklistViewModel = ChecklistViewModel(checklistUseCase: checklistUseCase)
         mapViewModel = MapViewModel(resourceUseCase: emergencyResourceUseCase)
         alertsViewModel = AlertsViewModel(weaUseCase: weaUseCase, weatherAlertUseCase: weatherAlertUseCase, stateRiskUseCase: stateRiskUseCase)
+    }
+    
+    /// Call after the first frame renders to lazily initialize Foundation Models on a background thread.
+    /// This avoids blocking app launch while the FoundationModels framework loads its @Generable metadata.
+    func initializeFoundationModelsIfAvailable() {
+        #if canImport(FoundationModels)
+        if #available(iOS 26.0, *) {
+            Task.detached(priority: .userInitiated) {
+                // Create FM objects off the main thread so framework init doesn't block the UI.
+                let fmExtended = FoundationModelsExtendedFeatures()
+                let fmAsk = FoundationModelsAskUseCase()
+                
+                await MainActor.run {
+                    self.extendedFeatures.upgradeToFoundationModels(
+                        askUseCase: fmExtended,
+                        guidedGeneration: fmExtended,
+                        contentTagging: fmExtended,
+                        summarization: fmExtended,
+                        emergencyPrioritization: fmExtended,
+                        queryParsing: fmExtended,
+                        conversationSession: fmExtended
+                    )
+                    // Upgrade the legacy ask orchestrator too
+                    if let orchestrator = self.askUseCase as? AskDisasterReadyOrchestrator {
+                        orchestrator.upgradePreferred(fmAsk)
+                    }
+                }
+            }
+        }
+        #endif
     }
 }
 
