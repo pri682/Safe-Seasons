@@ -1,6 +1,6 @@
 //
 //  EmergencyResourceRecord.swift
-//  SafeSeasons
+//  DisasterReady
 //
 //  Codable DTO for loading POIs from JSON (Data/resources.json). Keeps data out of code.
 //
@@ -22,6 +22,10 @@ struct EmergencyResourceRecord: Codable {
         case "firestation", "fire_station": resourceType = .fireStation
         case "policestation", "police_station": resourceType = .policeStation
         case "shelter": resourceType = .shelter
+        case "emergencymgmt", "emergency_mgmt", "fema": resourceType = .emergencyMgmt
+        case "pharmacy": resourceType = .pharmacy
+        case "redcross", "red_cross": resourceType = .redCross
+        case "evacuationroute", "evacuation_route": resourceType = .evacuationRoute
         default: resourceType = nil
         }
         guard let t = resourceType else { return nil }
