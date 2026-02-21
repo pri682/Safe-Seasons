@@ -1,6 +1,6 @@
 //
 //  EmergencyResourceRepository.swift
-//  SafeSeasons
+//  DisasterReady
 //
 //  SRP: emergency resource data access. Loads from JSON first (Data/resources.json), fallback to EmbeddedData.
 //  Fully offline; no APIs. Edit resources.json to add/change POIs without recompiling.
@@ -9,7 +9,11 @@
 import Foundation
 
 final class EmergencyResourceRepository: EmergencyResourceRepositoryProtocol {
-    private lazy var cachedResources: [EmergencyResource] = loadResources()
+    private let cachedResources: [EmergencyResource]
+
+    init() {
+        cachedResources = Self.loadResources()
+    }
 
     func fetchAll() -> [EmergencyResource] {
         cachedResources
@@ -20,7 +24,7 @@ final class EmergencyResourceRepository: EmergencyResourceRepositoryProtocol {
     }
 
     /// Load POIs from bundled JSON (Data/resources.json) if present; otherwise use EmbeddedData.
-    private func loadResources() -> [EmergencyResource] {
+    private static func loadResources() -> [EmergencyResource] {
         guard let url = resolveResourcesJSONURL(),
               let data = try? Data(contentsOf: url),
               let records = try? JSONDecoder().decode([EmergencyResourceRecord].self, from: data) else {
@@ -31,7 +35,7 @@ final class EmergencyResourceRepository: EmergencyResourceRepositoryProtocol {
     }
 
     /// Resolve URL for resources.json from the app bundle (Data/resources.json or resources.json).
-    private func resolveResourcesJSONURL() -> URL? {
+    private static func resolveResourcesJSONURL() -> URL? {
         if let url = Bundle.main.url(forResource: "resources", withExtension: "json", subdirectory: "Data") {
             return url
         }
