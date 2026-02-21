@@ -1,20 +1,6 @@
-//
-//  OfflineAIData.swift
-//  SafeSeasons
-//
-//  SRP: rules table + narratives store for offline rule-based guidance only.
-//  (stateAbbr, month, hazard) → [narrative IDs]; narratives = prewritten strings.
-//
-//  **Attribution:**
-//  - Preparedness tips and safety guidance based on:
-//    • Federal Emergency Management Agency (FEMA) - ready.gov
-//    • National Weather Service (NWS) - weather.gov/safety
-//  - Disaster preparedness recommendations follow official FEMA and NWS public safety resources
-//
 
 import Foundation
 
-// MARK: - Narrative IDs
 
 enum RiskNarrativeId: String, CaseIterable, Hashable {
     case flashFloodCommon = "flash_flood_common"

@@ -7,7 +7,7 @@ struct AskContext {
     let month: String
 }
 
-protocol AskSafeSeasonsUseCaseProtocol: Sendable {
+protocol AskDisasterReadyUseCaseProtocol: Sendable {
     
     func isAppleIntelligenceAvailable() -> Bool
 
@@ -16,10 +16,10 @@ protocol AskSafeSeasonsUseCaseProtocol: Sendable {
 }
 
 
-protocol ExtendedAskSafeSeasonsUseCaseProtocol: AskSafeSeasonsUseCaseProtocol, StreamingAskUseCaseProtocol {
+protocol ExtendedAskDisasterReadyUseCaseProtocol: AskDisasterReadyUseCaseProtocol, StreamingAskUseCaseProtocol {
    
 }
 
-extension ExtendedAskSafeSeasonsUseCaseProtocol {
+extension ExtendedAskDisasterReadyUseCaseProtocol {
     func prewarmModel() {}
 }

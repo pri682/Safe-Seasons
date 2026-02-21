@@ -1,9 +1,3 @@
-//
-//  StateRiskRepository.swift
-//  SafeSeasons
-//
-//  SRP: state-risk data access only. DIP: depends on KeyValueStoring.
-//
 
 import Foundation
 

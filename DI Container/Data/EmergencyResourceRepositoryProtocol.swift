@@ -1,9 +1,4 @@
-//
-//  EmergencyResourceRepositoryProtocol.swift
-//  SafeSeasons
-//
-//  DIP: use cases depend on this, not concrete EmergencyResourceRepository.
-//
+
 
 import Foundation
 

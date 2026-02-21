@@ -1,7 +1,4 @@
-//
-//  DisasterRepositoryProtocol.swift
-//  SafeSeasons
-//
+
 
 import Foundation
 

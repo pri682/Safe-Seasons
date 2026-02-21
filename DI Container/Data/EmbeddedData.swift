@@ -1,9 +1,3 @@
-//
-//  EmbeddedData.swift
-//  SafeSeasons
-//
-//  SRP: offline data source only. Repositories depend on this, not persistence.
-//
 
 import Foundation
 
@@ -101,10 +95,7 @@ enum EmbeddedData {
         _state("Wyoming", "WY", .moderate, ["Winter Storms", "Wildfires", "Flooding"], [])
     ]
 
-    // MARK: - Checklist Items (with stable UUIDs for persistence)
-    
-    /// Stable UUIDs for checklist items to ensure persistence across app launches.
-    /// These are hardcoded so that UserDefaults keys remain consistent.
+
     private static let checklistIDs: [UUID] = {
         let strings = [
             "550e8400-e29b-41d4-a716-446655440001", // water
@@ -372,8 +363,7 @@ enum EmbeddedData {
         )
     ]
 
-    // MARK: - Emergency Resources (offline POIs: Cupertino, CA, TX, Seattle, and all states)
-
+  
     static let emergencyResources: [EmergencyResource] = [
         // ——— Cupertino & San Jose area, CA ———
         EmergencyResource(name: "Kaiser Permanente Santa Clara", type: .hospital, coordinate: Coordinate(latitude: 37.3230, longitude: -122.0322), address: "900 Kiely Blvd, Santa Clara, CA"),

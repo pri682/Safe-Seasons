@@ -1,9 +1,4 @@
-//
-//  DisasterRepository.swift
-//  SafeSeasons
-//
-//  SRP: disaster/category data access only. DIP: depends on EmbeddedData (data source).
-//
+
 
 import Foundation
 

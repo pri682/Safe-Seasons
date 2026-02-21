@@ -1,6 +1,6 @@
 //
 //  ChecklistRepository.swift
-//  SafeSeasons
+//  DisasterReady
 //
 //  SRP: checklist data access only. DIP: depends on KeyValueStoring, ImageStoring.
 //

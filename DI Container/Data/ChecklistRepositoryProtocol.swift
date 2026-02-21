@@ -1,9 +1,3 @@
-//
-//  ChecklistRepositoryProtocol.swift
-//  SafeSeasons
-//
-//  DIP: use cases depend on this, not concrete ChecklistRepository.
-//
 
 import Foundation
 import UIKit
