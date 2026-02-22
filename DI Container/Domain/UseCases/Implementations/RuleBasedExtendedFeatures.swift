@@ -1,6 +1,6 @@
 //
 //  RuleBasedExtendedFeatures.swift
-//  SafeSeasons
+//  DisasterReady
 //
 //  SRP: Rule-based fallback implementations for all extended features. DIP: implements feature protocols.
 //  Provides offline, deterministic fallbacks when Foundation Models are unavailable.
@@ -10,7 +10,7 @@ import Foundation
 
 /// Rule-based fallback for extended Foundation Models features.
 /// Uses @unchecked Sendable so streamAsk’s Task closure can capture self under Swift 6.
-final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
+final class RuleBasedExtendedFeatures: ExtendedAskDisasterReadyUseCaseProtocol,
                                         GuidedGenerationUseCaseProtocol,
                                         ContentTaggingUseCaseProtocol,
                                         SummarizationUseCaseProtocol,
@@ -21,24 +21,27 @@ final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
     
     private let disasterUseCase: DisasterUseCaseProtocol
     private let offlineAIUseCase: OfflineAIUseCaseProtocol
-    private var conversationHistory: [String] = []
+    private let conversationLock = NSLock()
+    private var _conversationHistory: [String] = []
+    private var conversationHistory: [String] {
+        get { conversationLock.withLock { _conversationHistory } }
+        set { conversationLock.withLock { _conversationHistory = newValue } }
+    }
     
     init(disasterUseCase: DisasterUseCaseProtocol, offlineAIUseCase: OfflineAIUseCaseProtocol) {
         self.disasterUseCase = disasterUseCase
         self.offlineAIUseCase = offlineAIUseCase
     }
     
-    // MARK: - AskSafeSeasonsUseCaseProtocol
+    // MARK: - AskDisasterReadyUseCaseProtocol
     
     func isAppleIntelligenceAvailable() -> Bool {
         false // Rule-based, not Apple Intelligence
     }
     
     func ask(question: String, context: AskContext) async throws -> String {
-        // Use existing rule-based logic
         let lowerQuestion = question.lowercased()
         
-        // Check for disaster mentions
         for category in disasterUseCase.getAllCategories() {
             for disaster in category.disasters {
                 if lowerQuestion.contains(disaster.name.lowercased()) {
@@ -47,7 +50,6 @@ final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
             }
         }
         
-        // Check for state/location mentions
         if let state = context.state, lowerQuestion.contains(state.name.lowercased()) || lowerQuestion.contains(state.abbreviation.lowercased()) {
             let tips = offlineAIUseCase.getContextualTips(state: state, month: context.month)
             if !tips.isEmpty {
@@ -55,7 +57,6 @@ final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
             }
         }
         
-        // Generic response
         return "I can help with disaster preparedness. Try asking about specific disasters, your state, or preparedness steps. For emergencies, call 911."
     }
     
@@ -89,7 +90,6 @@ final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
         var steps: [String] = []
         var supplies: [String] = []
         
-        // Find matching disaster
         for category in disasterUseCase.getAllCategories() {
             for disaster in category.disasters {
                 if lowerQuestion.contains(disaster.name.lowercased()) {
@@ -113,14 +113,12 @@ final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
     func generatePersonalizedChecklist(disaster: String, state: String, userProfile: String) async throws -> PersonalizedChecklist {
         var items: [PersonalizedChecklistItem] = []
         
-        // Base items
         items.append(PersonalizedChecklistItem(name: "Water (1 gallon per person per day)", priority: "critical", reason: "Essential for survival"))
         items.append(PersonalizedChecklistItem(name: "Non-perishable food (3-day supply)", priority: "critical", reason: "Sustains you during emergencies"))
         items.append(PersonalizedChecklistItem(name: "First aid kit", priority: "high", reason: "Treat injuries immediately"))
         items.append(PersonalizedChecklistItem(name: "Flashlight and batteries", priority: "high", reason: "Light during power outages"))
         items.append(PersonalizedChecklistItem(name: "Important documents", priority: "high", reason: "Identity and insurance proof"))
         
-        // Profile-specific items
         if userProfile.lowercased().contains("pet") {
             items.append(PersonalizedChecklistItem(name: "Pet food and supplies", priority: "high", reason: "Care for your pets"))
         }
@@ -131,12 +129,16 @@ final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
         return PersonalizedChecklist(items: items)
     }
     
+    func generateDisasterImagePrompt(disaster: Disaster) async throws -> String {
+        let prefix = String(disaster.description.prefix(200))
+        return "A dramatic but safe illustration of \(disaster.name): \(prefix). Atmosphere and setting only, no people. Suitable for preparedness education."
+    }
+    
     // MARK: - ContentTaggingUseCaseProtocol
     
     func classifyQuestion(_ question: String) async throws -> QuestionClassification {
         let lowerQuestion = question.lowercased()
         
-        // Extract disaster type
         var disasterType: String? = nil
         let disasterKeywords: [String: String] = [
             "tornado": "tornado",
@@ -155,7 +157,6 @@ final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
             }
         }
         
-        // Extract state
         var mentionedState: String? = nil
         for state in EmbeddedData.states {
             if lowerQuestion.contains(state.name.lowercased()) || lowerQuestion.contains(state.abbreviation.lowercased()) {
@@ -164,7 +165,6 @@ final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
             }
         }
         
-        // Determine urgency
         let urgency: String
         if lowerQuestion.contains("emergency") || lowerQuestion.contains("urgent") || lowerQuestion.contains("now") {
             urgency = "emergency"
@@ -269,7 +269,6 @@ final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
     func prioritizeEmergencyActions(disaster: String, context: String) async throws -> PrioritizedActions {
         var actions: [PrioritizedAction] = []
         
-        // Find disaster
         var foundDisaster: Disaster? = nil
         for category in disasterUseCase.getAllCategories() {
             if let disaster = category.disasters.first(where: { $0.name.lowercased() == disaster.lowercased() }) {
@@ -287,7 +286,6 @@ final class RuleBasedExtendedFeatures: ExtendedAskSafeSeasonsUseCaseProtocol,
                 actions.append(PrioritizedAction(step: step, priority: index < 2 ? "important" : "preparatory", estimatedTime: nil))
             }
         } else {
-            // Generic prioritization
             actions = [
                 PrioritizedAction(step: "Call 911 in emergencies", priority: "immediate", estimatedTime: "1 minute"),
                 PrioritizedAction(step: "Evacuate if ordered", priority: "immediate", estimatedTime: "5 minutes"),
